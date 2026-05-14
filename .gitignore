@@ -1,1 +1,5 @@
 node_modules/
+temp/
+unsaved_scene.json
+settings.json
+session.json

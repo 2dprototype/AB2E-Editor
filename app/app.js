@@ -206,21 +206,23 @@ App.prototype.openFileInTab = function(filePath){
 		} catch(e) {
 			console.error("Failed to load .ab2e file", e);
 		}
-	} else if(ext === '.json' || ext === '.json5' || ext === '.pson'){
-		// Try to open as scene first if it's potentially a scene file
-		try {
-			var content = fs.readFileSync(filePath, 'utf8');
-			var scene = null;
-			if(ext == '.pson') scene = from_buffer(fs.readFileSync(filePath), ext);
-			else scene = parse(content, ext);
-			
-			if(scene && (scene.bodies || scene.joints)){ // Heuristic for other JSON-like files
-				this.newProject(new SceneManager(), 'scene', filePath);
-				this.sceneManager.loadSceneData(scene);
-				return;
-			}
-		} catch(e) {}
 	}
+	
+	// else if(ext === '.json' || ext === '.json5' || ext === '.pson'){
+		// // Try to open as scene first if it's potentially a scene file
+		// try {
+			// var content = fs.readFileSync(filePath, 'utf8');
+			// var scene = null;
+			// if(ext == '.pson') scene = from_buffer(fs.readFileSync(filePath), ext);
+			// else scene = parse(content, ext);
+			
+			// if(scene && (scene.bodies || scene.joints)){ // Heuristic for other JSON-like files
+				// this.newProject(new SceneManager(), 'scene', filePath);
+				// this.sceneManager.loadSceneData(scene);
+				// return;
+			// }
+		// } catch(e) {}
+	// }
 
 	// Default to text if not a scene
 	var text = fs.readFileSync(filePath, 'utf8');

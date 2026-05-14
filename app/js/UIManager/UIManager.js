@@ -789,6 +789,7 @@ UIManager.prototype.openFolder = function(){
 		this.workspaceMenu.setWorkspaceRoot(result.filePaths[0]);
 		this.workspaceMenu.show();
 	}
+	this.resizeLayout()
 }
 
 UIManager.prototype.getFilePath = function(options = {}){

@@ -77,7 +77,7 @@ function workspaceMenu(sceneManager, viewport, UIManager) {
         
         var head = document.createElement('div');
         head.className = 'tree-item-head';
-        head.innerHTML = `<i class="bi bi-folder-fill icon"></i> <span class="name">${dir.name}</span>`;
+        head.innerHTML = `<i class="bi bi-chevron-right chevron"></i><i class="bi bi-folder-fill icon folder-icon"></i> <span class="name">${dir.name}</span>`;
         
         var content = document.createElement('div');
         content.className = 'tree-item-content';
@@ -89,13 +89,15 @@ function workspaceMenu(sceneManager, viewport, UIManager) {
                 div.classList.remove('collapsed');
                 div.classList.add('expanded');
                 content.style.display = 'block';
-                head.querySelector('.icon').className = 'bi bi-folder2-open icon';
+                head.querySelector('.icon').className = 'bi bi-folder2-open icon folder-icon';
+                head.querySelector('.chevron').className = 'bi bi-chevron-down chevron';
                 this.renderTree(dir.path, content);
             } else {
                 div.classList.remove('expanded');
                 div.classList.add('collapsed');
                 content.style.display = 'none';
-                head.querySelector('.icon').className = 'bi bi-folder-fill icon';
+                head.querySelector('.icon').className = 'bi bi-folder-fill icon folder-icon';
+                head.querySelector('.chevron').className = 'bi bi-chevron-right chevron';
             }
         };
         
@@ -109,15 +111,16 @@ function workspaceMenu(sceneManager, viewport, UIManager) {
         div.className = 'tree-item file';
         var ext = path.extname(file.name).toLowerCase();
         var iconClass = 'bi bi-file-earmark-text';
+        var colorClass = '';
         
-        if (ext === '.ab2e') iconClass = 'bi bi-file-earmark-play-fill';
-        else if (ext === '.js') iconClass = 'bi bi-filetype-js';
-        else if (ext === '.json') iconClass = 'bi bi-filetype-json';
-        else if (ext === '.css') iconClass = 'bi bi-filetype-css';
-        else if (ext === '.html') iconClass = 'bi bi-filetype-html';
-        else if (['.png', '.jpg', '.jpeg', '.svg'].includes(ext)) iconClass = 'bi bi-file-earmark-image';
+        if (ext === '.ab2e') { iconClass = 'bi bi-file-earmark-play-fill'; colorClass = 'scene-color'; }
+        else if (ext === '.js') { iconClass = 'bi bi-filetype-js'; colorClass = 'js-color'; }
+        else if (ext === '.json') { iconClass = 'bi bi-filetype-json'; colorClass = 'json-color'; }
+        else if (ext === '.css') { iconClass = 'bi bi-filetype-css'; colorClass = 'css-color'; }
+        else if (ext === '.html') { iconClass = 'bi bi-filetype-html'; colorClass = 'html-color'; }
+        else if (['.png', '.jpg', '.jpeg', '.svg'].includes(ext)) { iconClass = 'bi bi-file-earmark-image'; colorClass = 'image-color'; }
         
-        div.innerHTML = `<i class="${iconClass} icon"></i> <span class="name">${file.name}</span>`;
+        div.innerHTML = `<i class="bi bi-dot spacer-icon"></i><i class="${iconClass} icon ${colorClass}"></i> <span class="name">${file.name}</span>`;
         
         div.onclick = (e) => {
             e.stopPropagation();

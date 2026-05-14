@@ -128,36 +128,31 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 	}
 	
 	// view > buttons
-	//display Viewport/Selection Property
-	this.viewButtons[0].onclick = function(){
-		viewport.isHidden = !viewport.isHidden;
-		ref.UIManager.updateLayout();
-	}
 	//display propertiesMenu
-	this.viewButtons[1].onclick = function(){
+	this.viewButtons[0].onclick = function(){
 		ref.UIManager.propertiesMenu.isHidden = !ref.UIManager.propertiesMenu.isHidden;
 		ref.UIManager.updateLayout();
 	}
 	//display workspaceMenu
-	this.viewButtons[2].onclick = function(){
+	this.viewButtons[1].onclick = function(){
 		ref.UIManager.workspaceMenu.isHidden = !ref.UIManager.workspaceMenu.isHidden;
 		ref.UIManager.updateLayout();
 	}
 	//display StatusBar
-	this.viewButtons[3].onclick = function(){
+	this.viewButtons[2].onclick = function(){
 		ref.UIManager.statusBar.isHidden = !ref.UIManager.statusBar.isHidden;
 		ref.UIManager.updateLayout();
 	}	
 	//zoom in
-	this.viewButtons[4].onclick = function(){
+	this.viewButtons[3].onclick = function(){
 		ref.viewport.zoomIn();
 	}
 	//zoom out
-	this.viewButtons[5].onclick = function(){
+	this.viewButtons[4].onclick = function(){
 		ref.viewport.zoomOut();
 	}
 	//reset view
-	this.viewButtons[6].onclick = function(){
+	this.viewButtons[5].onclick = function(){
 		ref.viewport.resetView();
 	}
 	

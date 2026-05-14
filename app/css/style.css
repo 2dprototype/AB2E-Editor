@@ -798,6 +798,12 @@ table tbody td span {
     align-items: center;
 }
 
+.tree-item .chevron {
+    font-size: 10px;
+    margin-right: 4px;
+    color: #5c6370;
+}
+
 .tree-item .icon {
     margin-right: 6px;
     font-size: 14px;
@@ -806,8 +812,23 @@ table tbody td span {
     text-align: center;
 }
 
+.tree-item .spacer-icon {
+    font-size: 10px;
+    margin-right: 4px;
+    visibility: hidden;
+}
+
+/* Icon Colors */
+.folder-icon { color: #dcb67a; }
+.scene-color { color: #528bff; }
+.js-color { color: #f1e05a; }
+.json-color { color: #ce9178; }
+.css-color { color: #569cd6; }
+.html-color { color: #e34c26; }
+.image-color { color: #d19a66; }
+
 .tree-item-content {
-    margin-left: 15px;
+    margin-left: 12px;
 }
 
 .no-workspace {

@@ -258,9 +258,8 @@ App.prototype.updateTabs = function(){
 		if(p.isDirty) tab.classList.add('dirty');
 		
 		var name = p.currentFile.name || 'New Scene';
-		var icon = p.type === 'scene' ? '🎬' : '📄';
 		var unsavedIndicator = p.isDirty ? '<span class="unsaved-dot">●</span>' : '';
-		tab.innerHTML = `<span class="icon">${icon}</span><span>${name}${unsavedIndicator}</span><i class="close-tab">×</i>`;
+		tab.innerHTML = `<span>${name}${unsavedIndicator}</span><i class="close-tab">×</i>`;
 		tab.onclick = (e) => {
 			if(e.target.className === 'close-tab'){
 				ref.closeProject(i);

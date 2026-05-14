@@ -101,6 +101,10 @@ Viewport.prototype.onKeyDown = function(e){
 	if(inpH.CTRL_PRESSED && e.which == 89) sceneManager.history.redo();
 	//undo history
 	if(inpH.CTRL_PRESSED && e.which == 90) sceneManager.history.undo();
+	// copy
+	if(inpH.CTRL_PRESSED && e.which == 67) Editor.copySelection();
+	// paste
+	if(inpH.CTRL_PRESSED && e.which == 86) Editor.paste();
 	
 	// return if in game mode
 	if (this.inputHandler.inGameMode) return;

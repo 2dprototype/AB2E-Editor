@@ -2061,6 +2061,62 @@ SceneManager.prototype.newScene = function(){
 	// this.scripts.push(new Script(atob('KGZ1bmN0aW9uKHNjZW5lLCByZWYpew0KCQ0KCXRoaXMuZHJhdyA9IGZ1bmN0aW9uKGN0eCl7DQoJCQ0KCX0NCgkNCgl0aGlzLm1vdXNlbW92ZSA9IGZ1bmN0aW9uKHgsIHksIGUpIHsNCgkJDQoJfQ0KCQ0KCXRoaXMubW91c2Vkb3duID0gZnVuY3Rpb24oeCwgeSwgZSkgew0KCQkNCgl9DQoJDQoJdGhpcy5tb3VzZWxlYXZlID0gZnVuY3Rpb24oeCwgeSwgZSkgew0KCQkNCgl9DQp9KQ'), 'javascript'))
 };
 
+SceneManager.prototype.getSelectionData = function(){
+	var data = {
+		bodies: [],
+		joints: [],
+		particles: []
+	};
+
+	// We only copy selected bodies
+	data.bodies = clone_obj(this.selectedBodies);
+	data.particles = clone_obj(this.selectedParticles);
+
+	// For joints, we only copy if BOTH bodies are in the selection
+	for (var i = 0; i < this.selectedJoints.length; i++){
+		var joint = this.selectedJoints[i];
+		var idxA = this.selectedBodies.indexOf(joint.bodyA);
+		var idxB = this.selectedBodies.indexOf(joint.bodyB);
+		
+		if(idxA !== -1 && idxB !== -1){
+			var jClone = clone_obj(joint);
+			jClone.bodyIndexA = idxA;
+			jClone.bodyIndexB = idxB;
+			// Clean up references for JSON serialization
+			delete jClone.bodyA;
+			delete jClone.bodyB;
+			data.joints.push(jClone);
+		}
+	}
+	
+	return data;
+}
+
+SceneManager.prototype.pasteSelectionData = function(data){
+	if(!data || (!data.bodies.length && !data.particles.length && !data.joints.length)) return;
+	
+	var newBodies = [];
+	for(var i = 0; i < data.bodies.length; i++){
+		var body = loadBody(data.bodies[i]);
+		this.addBody(body);
+		newBodies.push(body);
+	}
+	
+	for(var i = 0; i < data.particles.length; i++){
+		var particle = loadParticle(data.particles[i]);
+		this.addParticle(particle);
+	}
+	
+	for(var i = 0; i < data.joints.length; i++){
+		var jointData = data.joints[i];
+		var joint = loadJoint(jointData, newBodies, []);
+		this.addJoint(joint);
+	}
+	
+	this.recordHistory();
+}
+
+
 SceneManager.prototype.loadScene = function(scene){
 	var wasRestoring = this.history.isRestoring;
 	this.history.isRestoring = true;

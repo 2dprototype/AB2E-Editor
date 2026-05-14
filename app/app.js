@@ -74,6 +74,7 @@ var App = function(){
 	
 	this.projects = [];
 	this.activeProjectIndex = -1;
+	this.clipboard = null;
 
 	this.custom_execute = '';
 	this.terminal_mode = 'console';
@@ -264,6 +265,15 @@ App.prototype.headlessExport = function(input, output){
 }
 
 
+
+App.prototype.copySelection = function(){
+	this.clipboard = this.sceneManager.getSelectionData();
+}
+
+App.prototype.paste = function(){
+	this.sceneManager.pasteSelectionData(this.clipboard);
+	this.UIManager.propertiesMenu.updateSceneCollection();
+}
 
 App.prototype.init = function(){
 	var ref = this;

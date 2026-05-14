@@ -45,14 +45,14 @@ toolbar.prototype.init = function(){
 	}
 	//export as json
 	this.fileTools[1].onclick = function(){
-		var data = JSON.stringify(sceneManager.exportWorld(false), null, 4);
+		var data = JSON.stringify(ref.sceneManager.exportWorld(false), null, 4);
 		if(Editor.exportedFile.path == '' || Editor.exportedFile.ext != 'json') ref.UIManager.exportSceneAs(data, 'json');
 		else fs.writeFileSync(Editor.exportedFile.path, data);
 	}
 	
 	//export as xml
 	this.fileTools[2].onclick = function(){
-		var data = toXML(sceneManager.exportWorld(false), null, 4);
+		var data = toXML(ref.sceneManager.exportWorld(false), null, 4);
 		if(Editor.exportedFile.path == '' || Editor.exportedFile.ext != 'xml') ref.UIManager.exportSceneAs(data, 'xml');
 		else fs.writeFileSync(Editor.exportedFile.path, data);
 	}
@@ -82,11 +82,7 @@ toolbar.prototype.init = function(){
 	
 	//export json as blob
 	this.fileTools[3].onclick = function(){
-		// var json = JSON.stringify(sceneManager.exportWorld(), null, 4);
-		// var data = new Blob([json], {type:'text/plain'});
-		// var textFile = window.URL.createObjectURL(data);
-		// window.open(textFile);	
-		var json = JSON.stringify(sceneManager.exportWorld(), null, 4);
+		var json = JSON.stringify(ref.sceneManager.exportWorld(), null, 4);
 		var h_json = hljs.highlight(json, {language: 'json'}).value;
 		var html = `
 		<html>
@@ -113,25 +109,23 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 		ref.updateModeButtons();
 	}
 	
+	//rotate
+	this.transformTools[1].onclick = function(){
+		ref.viewport.inputHandler.activateRotationTool();
+		ref.updateModeButtons();
+	}
+
 	//scale
 	this.transformTools[2].onclick = function(){
 		ref.viewport.inputHandler.activateScaleTool();
 		ref.updateModeButtons();
 	}
 	
-	//rotate
-	this.transformTools[1].onclick = function(){
-		ref.viewport.inputHandler.activateRotationTool();
-		ref.updateModeButtons();
-	}
-	
-	//rotate
+	//lock
 	this.transformTools[3].onclick = function(){
 		ref.viewport.inputHandler.activateLockMode();
 		ref.updateModeButtons();
 	}
-	
-
 	
 	// view > buttons
 	//display Selection Property
@@ -172,11 +166,11 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 	}
 	//duplicateSelection
 	this.editButtons[1].onclick = function(){
-		sceneManager.duplicateSelection();
+		ref.sceneManager.duplicateSelection();
 	}
 	//delete
 	this.editButtons[2].onclick = function(){
-		sceneManager.deleteSelectedObjects();
+		ref.sceneManager.deleteSelectedObjects();
 	}
 	//mode buttons
 	//local 
@@ -226,13 +220,13 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 	}
 	//P Key
 	this.modeButtons[9].onclick = function(){
-		ref.viewport.inputHandler.P_KEY_PRESSED = !ref.viewport.inputHandler.B_KEY_PRESSED; 
+		ref.viewport.inputHandler.P_KEY_PRESSED = !ref.viewport.inputHandler.P_KEY_PRESSED; 
 	}
 
 	var element = this.addButtons.bodies;
 	for(i = 0; i < element.length; i++){
 		element[i].onclick = function(){
-			sceneManager.createBody(parseInt(this.getAttribute('value')));
+			ref.sceneManager.createBody(parseInt(this.getAttribute('value')));
 			ref.UIManager.propertiesMenu.updateSceneCollection();
 		}
 	}
@@ -240,27 +234,24 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 	var element = this.addButtons.shapes;
 	for(i = 0; i < element.length; i++){
 		element[i].onclick = function(){
-			sceneManager.createShape(parseInt(this.getAttribute('value')));
+			ref.sceneManager.createShape(parseInt(this.getAttribute('value')));
 			ref.UIManager.propertiesMenu.updateSceneCollection();
 		}
 	}
 	var element = this.addButtons.joints;
 	for(i = 0; i < element.length; i++){
 		element[i].onclick = function(){
-			sceneManager.createJoint(parseInt(this.getAttribute('value')));
+			ref.sceneManager.createJoint(parseInt(this.getAttribute('value')));
 			ref.UIManager.propertiesMenu.updateSceneCollection();
 		}
 	}
 	var element = this.addButtons.particles;
 	for(i = 0; i < element.length; i++){
 		element[i].onclick = function(){
-			sceneManager.createParticle(parseInt(this.getAttribute('value')));
+			ref.sceneManager.createParticle(parseInt(this.getAttribute('value')));
 			ref.UIManager.propertiesMenu.updateSceneCollection();
 		}
 	}
-	
-	
-
 	
 	//files
 	this.fileButtons = document.getElementById('fileButtons').querySelectorAll("a");
@@ -292,17 +283,17 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 	}
 	//exprot as json 
 	this.fileButtons[6].onclick = function(){
-		var data = JSON.stringify(sceneManager.exportWorld(false), null, 4);
+		var data = JSON.stringify(ref.sceneManager.exportWorld(false), null, 4);
 		ref.UIManager.exportSceneAs(data, 'json');
 	}
 	//exprot as xml
 	this.fileButtons[7].onclick = function(){
-		var data = toXML(sceneManager.exportWorld(false), null, 4);
+		var data = toXML(ref.sceneManager.exportWorld(false), null, 4);
 		ref.UIManager.exportSceneAs(data, 'xml');
 	}
 	//exprot as json & trim image
 	this.fileButtons[8].onclick = function(){
-		var data = JSON.stringify(sceneManager.exportWorld(true), null, 4);
+		var data = JSON.stringify(ref.sceneManager.exportWorld(true), null, 4);
 		ref.UIManager.exportSceneAs(data, 'json');
 	}
 	//exprot as ._ab2e
@@ -326,8 +317,8 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 				if(filepath){
 					var file = fs.readFileSync(filepath, 'utf8');
 					var jsondata = JSON.parse(file);
-					sceneManager.newScene();
-					sceneManager.loadSceneData(jsondata);
+					ref.sceneManager.newScene();
+					ref.sceneManager.loadSceneData(jsondata);
 					Editor.load_config_file();				    
 				}
 			}
@@ -336,7 +327,6 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 			}
 		}
 	}
-	
 }
 
 toolbar.prototype.updateGameplayButtons = function(_Editor){
@@ -386,8 +376,6 @@ toolbar.prototype.updateCustomScripts = function(){
 	});
 }
 
-
-
 toolbar.prototype.updateModeButtons = function(){
 	var inputHandler = this.viewport.inputHandler;
 	for(i = 0; i < 5; i++){
@@ -416,5 +404,3 @@ toolbar.prototype.updateModeButtons = function(){
 	if(inputHandler.LOCK_SCALE_ENABLED) this.modeButtons[5].style.color = '#00f';
 	else this.modeButtons[5].style.color = '#000';
 }
-
-

@@ -55,9 +55,9 @@ UIManager.prototype.create_option_menu = function(e){
 		viewport.inputHandler.lastRightMouseClickPos = [wx, wy];
 		var arr = [
 			{ name : 'Select All', childs : null, onclick : function(){sceneManager.selectAll()} },
-			{ name : 'Copy', childs : null, onclick : function(){} },
+			{ name : 'Copy', childs : null, onclick : function(){Editor.copySelection()} },
 			{ name : 'Delete', childs : null, onclick : function(){sceneManager.deleteSelectedObjects()} },
-			{ name : 'Paste', childs : null, onclick : function(){} },
+			{ name : 'Paste', childs : null, onclick : function(){Editor.paste()} },
 			// { name : 'Clone Selection', childs : null, onclick : function(){sceneManager.duplicateSelection()} },
 			{
 				name : "Add Body",

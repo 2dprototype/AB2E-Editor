@@ -1,7 +1,7 @@
 {
     "info": {
         "dateCreated": 1769576673395,
-        "lastModified": 1769578994453,
+        "lastModified": 1778731321777,
         "favourite": false,
         "comment": "",
         "name": "New Scene",
@@ -15,12 +15,12 @@
                 "userData": null,
                 "shapes": [
                     {
-                        "id": "Y10L24OTCLUQSBJ8",
-                        "name": "shape_0",
+                        "id": "M3VUFEJ5MUXZVXON",
+                        "name": "shape_66",
                         "shapeType": 0,
                         "position": [
-                            45.061105426917706,
-                            60.127770696237896
+                            82.0611054269177,
+                            58.127770696237896
                         ],
                         "scaleXY": [
                             1,
@@ -29,43 +29,43 @@
                         "rotation": 0,
                         "vertices": [
                             {
-                                "x": 20.061105426917663,
-                                "y": 35.12777069623796,
+                                "x": 57.06110542691766,
+                                "y": 33.12777069623796,
                                 "width": 10,
                                 "height": 10,
                                 "isSelected": false
                             },
                             {
-                                "x": 70.06110542691772,
-                                "y": 35.127770696237945,
+                                "x": 107.06110542691772,
+                                "y": 33.127770696237945,
                                 "width": 10,
                                 "height": 10,
                                 "isSelected": false
                             },
                             {
-                                "x": 70.06110542691772,
-                                "y": 85.12777069623783,
+                                "x": 107.06110542691772,
+                                "y": 83.12777069623783,
                                 "width": 10,
                                 "height": 10,
                                 "isSelected": false
                             },
                             {
-                                "x": 20.061105426917667,
-                                "y": 85.12777069623783,
+                                "x": 57.06110542691766,
+                                "y": 83.12777069623783,
                                 "width": 10,
                                 "height": 10,
                                 "isSelected": false
                             }
                         ],
                         "bounds": [
-                            45.06110542691769,
-                            60.12777069623789,
+                            82.06110542691769,
+                            58.12777069623789,
                             50.00000000000006,
                             49.999999999999886
                         ],
                         "centroid": [
-                            45.06110542691769,
-                            60.127770696237896
+                            82.06110542691769,
+                            58.127770696237896
                         ],
                         "isSelected": false,
                         "isHover": false,
@@ -83,8 +83,8 @@
                     }
                 ],
                 "position": [
-                    45.061105426917706,
-                    60.127770696237896
+                    82.0611054269177,
+                    58.127770696237896
                 ],
                 "scaleXY": [
                     1,
@@ -92,12 +92,12 @@
                 ],
                 "rotation": 0,
                 "bounds": [
-                    45.06110542691769,
-                    60.12777069623789,
+                    82.06110542691769,
+                    58.12777069623789,
                     50.00000000000006,
                     49.999999999999886
                 ],
-                "isSelected": false,
+                "isSelected": true,
                 "bodyType": 2,
                 "isBullet": false,
                 "isFixedRotation": false,
@@ -121,12 +121,12 @@
                 "userData": null,
                 "shapes": [
                     {
-                        "id": "Y10L24OTCLUQSBJ8",
-                        "name": "shape_0",
+                        "id": "RJ1O8RJ4032ZBFJB",
+                        "name": "shape_67",
                         "shapeType": 0,
                         "position": [
-                            103.25702165221038,
-                            -7.151834392445545
+                            140.25702165221037,
+                            -9.151834392445544
                         ],
                         "scaleXY": [
                             1,
@@ -135,43 +135,43 @@
                         "rotation": 0,
                         "vertices": [
                             {
-                                "x": 78.2570216522104,
-                                "y": -32.15183439244554,
+                                "x": 115.2570216522104,
+                                "y": -34.15183439244554,
                                 "width": 10,
                                 "height": 10,
                                 "isSelected": false
                             },
                             {
-                                "x": 128.25702165221043,
-                                "y": -32.151834392445544,
+                                "x": 165.25702165221043,
+                                "y": -34.15183439244555,
                                 "width": 10,
                                 "height": 10,
                                 "isSelected": false
                             },
                             {
-                                "x": 128.25702165221043,
-                                "y": 17.848165607554478,
+                                "x": 165.25702165221043,
+                                "y": 15.848165607554478,
                                 "width": 10,
                                 "height": 10,
                                 "isSelected": false
                             },
                             {
-                                "x": 78.2570216522104,
-                                "y": 17.84816560755447,
+                                "x": 115.2570216522104,
+                                "y": 15.84816560755447,
                                 "width": 10,
                                 "height": 10,
                                 "isSelected": false
                             }
                         ],
                         "bounds": [
-                            103.25702165221041,
-                            -7.151834392445533,
+                            140.25702165221043,
+                            -9.151834392445537,
                             50.00000000000003,
-                            50.00000000000002
+                            50.00000000000003
                         ],
                         "centroid": [
-                            103.2570216522104,
-                            -7.151834392445531
+                            140.25702165221043,
+                            -9.151834392445535
                         ],
                         "isSelected": false,
                         "isHover": false,
@@ -189,8 +189,8 @@
                     }
                 ],
                 "position": [
-                    103.25702165221038,
-                    -7.151834392445545
+                    140.25702165221037,
+                    -9.151834392445544
                 ],
                 "scaleXY": [
                     1,
@@ -198,12 +198,12 @@
                 ],
                 "rotation": 0,
                 "bounds": [
-                    103.25702165221041,
-                    -7.151834392445533,
+                    140.25702165221043,
+                    -9.151834392445537,
                     50.00000000000003,
-                    50.00000000000002
+                    50.00000000000003
                 ],
-                "isSelected": false,
+                "isSelected": true,
                 "bodyType": 0,
                 "isBullet": false,
                 "isFixedRotation": false,
@@ -217,7 +217,7 @@
                 "isAwake": true,
                 "isActive": true,
                 "gravityScale": 1,
-                "cloneOf": "WN46Y8M5VUD72B8K",
+                "cloneOf": null,
                 "selectedSprite": 0,
                 "sprites": []
             }
@@ -229,33 +229,33 @@
                 "bodyIndexA": 0,
                 "bodyIndexB": 1,
                 "localAnchorA": [
-                    44.27989770948534,
-                    -7.470357795006109
+                    81.27989770948534,
+                    -9.470357795006109
                 ],
                 "localAnchorB": [
-                    44.27989770948534,
-                    -7.470357795006109
+                    81.27989770948534,
+                    -9.470357795006109
                 ],
                 "userData": null,
                 "collideConnected": false,
                 "jointType": 2,
-                "enableLimit": false,
-                "enableMotor": false,
-                "lowerAngle": 0,
-                "maxMotorTorque": 100,
-                "motorSpeed": 100,
-                "referenceAngle": 0,
-                "upperAngle": 0,
                 "position": [
-                    44.27989770948534,
-                    -7.470357795006109
+                    81.27989770948534,
+                    -9.470357795006109
                 ],
                 "scaleXY": [
                     1,
                     1
                 ],
-                "isSelected": false,
-                "inEditMode": false
+                "isSelected": true,
+                "inEditMode": false,
+                "enableLimit": false,
+                "enableMotor": false,
+                "lowerAngle": 0,
+                "upperAngle": 0,
+                "maxMotorTorque": 100,
+                "motorSpeed": 100,
+                "referenceAngle": 0
             }
         ],
         "particles": [],

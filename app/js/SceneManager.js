@@ -29,6 +29,7 @@ function SceneManager(){
 	this.selectedJoints 	= [];
 	this.selectedAnchor;
 	this.scripts            = [];
+	this.history = new SceneHistory(this);
 }
 
 SceneManager.prototype.setScript = function(raw){
@@ -78,6 +79,12 @@ SceneManager.prototype.getSceneInfo = function(){
 SceneManager.prototype.setSceneInfo = function(obj){
 	for (var x in obj){
 	    this.info[x] = obj[x];
+	}
+}
+
+SceneManager.prototype.recordHistory = function(){
+	if(this.history && !this.history.isRestoring){
+		this.history.addHistory();
 	}
 }
 
@@ -311,6 +318,7 @@ SceneManager.prototype.deleteSelectedObjects = function(){
 			this.selectedParticles[0].shape.removeVertexGivenVertex(this.selectedVertices[i]);
 		}
 	}
+	this.history.addHistory();
 };
 
 SceneManager.prototype.duplicateSelection = function(){
@@ -377,6 +385,7 @@ SceneManager.prototype.duplicateSelection = function(){
 			sprite.vertices.splice(sprite.indexOfVertex(this.selectedVertices[i]) + 1, 0, this.selectedVertices[i].clone());
 		}
 	}
+	this.history.addHistory();
 };
 
 // don't use only aabb collision detection for chain shapes, instead use its edges
@@ -1533,10 +1542,12 @@ SceneManager.prototype.transformSelection = function(delta, inputHandler, naviga
 
 SceneManager.prototype.addBody = function(body){
 	this.bodies.push(body);
+	this.recordHistory();
 };
 //particles
 SceneManager.prototype.addParticle = function(particle){
 	this.particles.push(particle);
+	this.recordHistory();
 };
 
 /**
@@ -1640,6 +1651,7 @@ SceneManager.prototype.removeBody = function(body){
 			break;
 		}
 	}
+	this.recordHistory();
 };
 // removes particle from the scene
 SceneManager.prototype.removeParticle = function(p){
@@ -1657,10 +1669,12 @@ SceneManager.prototype.removeParticle = function(p){
 			break;
 		}
 	}
+	this.recordHistory();
 };
 
 SceneManager.prototype.addJoint = function(joint){
 	this.joints.push(joint);
+	this.recordHistory();
 };
 
 /**
@@ -1766,6 +1780,7 @@ SceneManager.prototype.removeJoint = function(joint){
 			break;
 		}
 	}
+	this.recordHistory();
 };
 
 SceneManager.prototype.getSelectedShapesBody = function(){
@@ -2040,11 +2055,15 @@ SceneManager.prototype.newScene = function(){
 	this.resetSceneInfo();
 	this.info.dateCreated = new Date().getTime();
 	this.info.lastModified = new Date().getTime();
+	this.history.clear();
+	this.history.addHistory();
 	
 	// this.scripts.push(new Script(atob('KGZ1bmN0aW9uKHNjZW5lLCByZWYpew0KCQ0KCXRoaXMuZHJhdyA9IGZ1bmN0aW9uKGN0eCl7DQoJCQ0KCX0NCgkNCgl0aGlzLm1vdXNlbW92ZSA9IGZ1bmN0aW9uKHgsIHksIGUpIHsNCgkJDQoJfQ0KCQ0KCXRoaXMubW91c2Vkb3duID0gZnVuY3Rpb24oeCwgeSwgZSkgew0KCQkNCgl9DQoJDQoJdGhpcy5tb3VzZWxlYXZlID0gZnVuY3Rpb24oeCwgeSwgZSkgew0KCQkNCgl9DQp9KQ'), 'javascript'))
 };
 
 SceneManager.prototype.loadScene = function(scene){
+	var wasRestoring = this.history.isRestoring;
+	this.history.isRestoring = true;
 	//bodies
 	for (var i = 0; i < scene.bodies.length; i++){
 		this.addBody(loadBody(scene.bodies[i]));
@@ -2064,6 +2083,8 @@ SceneManager.prototype.loadScene = function(scene){
 	for (s of scene.scripts) {
 		this.scripts.push(s)
 	}
+	this.history.isRestoring = wasRestoring;
+	this.recordHistory();
 };
 
 function cloneArray(obj){

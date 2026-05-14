@@ -97,10 +97,10 @@ Viewport.prototype.onKeyDown = function(e){
 		}
 	}
 	
-	// //redo history
-	// if(inpH.CTRL_PRESSED && e.which == 89) sceneManager.sceneHistory.redo();
-	// //undo history
-	// if(inpH.CTRL_PRESSED && e.which == 90) sceneManager.sceneHistory.undo();
+	//redo history
+	if(inpH.CTRL_PRESSED && e.which == 89) sceneManager.history.redo();
+	//undo history
+	if(inpH.CTRL_PRESSED && e.which == 90) sceneManager.history.undo();
 	
 	// return if in game mode
 	if (this.inputHandler.inGameMode) return;

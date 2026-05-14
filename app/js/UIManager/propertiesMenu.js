@@ -78,12 +78,14 @@ propertiesMenu.prototype.init = function(){
 			for(i = 0; i < sceneManager.selectedBodies.length; i++){
 				sceneManager.selectedBodies[i].bodyType = this.value;
 			}
+			sceneManager.recordHistory();
 		}
 		//name
 		this.bodyProperties[1].onchange = function(){
 			for(i = 0; i < sceneManager.selectedBodies.length; i++){
 				sceneManager.selectedBodies[i].name = this.value;
 			}
+			sceneManager.recordHistory();
 		}
 		//userData
 		this.bodyProperties[2].onchange = function(){
@@ -97,6 +99,7 @@ propertiesMenu.prototype.init = function(){
 				var pos = sceneManager.selectedBodies[i].position;
 				sceneManager.selectedBodies[i].setPosition(parseFloat(this.value), pos[1]);
 			}
+			sceneManager.recordHistory();
 		}
 		//position[1]
 		this.bodyProperties[4].onchange = function(){
@@ -104,12 +107,14 @@ propertiesMenu.prototype.init = function(){
 				var pos = sceneManager.selectedBodies[i].position;
 				sceneManager.selectedBodies[i].setPosition(pos[0], parseFloat(this.value));
 			}
+			sceneManager.recordHistory();
 		}	
 		//rotation
 		this.bodyProperties[5].onchange = function(){
 			for(i = 0; i < sceneManager.selectedBodies.length; i++){
 				sceneManager.selectedBodies[i].setRotation(parseFloat(this.value));
 			}
+			sceneManager.recordHistory();
 		}	
 		//scale_x
 		this.bodyProperties[6].onchange = function(){
@@ -117,6 +122,7 @@ propertiesMenu.prototype.init = function(){
 				var s = sceneManager.selectedBodies[i].scaleXY;
 				sceneManager.selectedBodies[i].setScale(parseFloat(this.value), s[1]);
 			}
+			sceneManager.recordHistory();
 		}	
 		//scale_y
 		this.bodyProperties[7].onchange = function(){
@@ -234,6 +240,7 @@ propertiesMenu.prototype.init = function(){
 				var pos = sceneManager.selectedShapes[i].position;
 				sceneManager.selectedShapes[i].setPosition(parseFloat(this.value), pos[1]);
 			}
+			sceneManager.recordHistory();
 		}	
 		//position_y
 		this.fixtureProperties[4].onchange = function(){
@@ -241,12 +248,14 @@ propertiesMenu.prototype.init = function(){
 				var pos = sceneManager.selectedShapes[i].position;
 				sceneManager.selectedShapes[i].setPosition(pos[0], parseFloat(this.value));
 			}
+			sceneManager.recordHistory();
 		}	
 		//rotation
 		this.fixtureProperties[5].onchange = function(){
 			for(i = 0; i < sceneManager.selectedShapes.length; i++){
 				sceneManager.selectedShapes[i].setRotation(parseFloat(this.value));
 			}
+			sceneManager.recordHistory();
 		}
 		//scale_x
 		this.fixtureProperties[6].onchange = function(){

@@ -416,6 +416,7 @@ App.prototype.is_current_file_saved = function(){
 }
 
 App.prototype.on_file_changed = function(){
+	this.sceneManager.recordHistory();
 	if(this.currentFile.path != ''){
 		if(this.is_current_file_saved()){
 			document.title = this.currentFile.path;

@@ -1,15 +1,12 @@
 {
-    "activeProjectIndex": 1,
+    "activeProjectIndex": 0,
     "projects": [
         {
             "path": "",
-            "isDirty": false,
-            "id": "lmg3px1zy"
-        },
-        {
-            "path": "C:\\Users\\Mahdin\\Documents\\AB2E\\jsxx\\sub\\pillow.ab2e",
             "isDirty": true,
-            "id": "mjnnvhooz"
+            "id": "d3itxr4mn",
+            "type": "scene"
         }
-    ]
+    ],
+    "workspaceRoot": "C:\\Users\\Mahdin\\Documents\\AB2E\\jsxx"
 }

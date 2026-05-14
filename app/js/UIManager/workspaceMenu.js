@@ -128,35 +128,6 @@ function workspaceMenu(sceneManager, viewport, UIManager) {
     };
 
     this.openFile = function(filePath) {
-        var ext = path.extname(filePath).toLowerCase();
-        if (ext === '.ab2e') {
-            this.UIManager.hideCodeEditor();
-            this.UIManager.viewport.show();
-            Editor.loadSceneFromFile(filePath);
-        } else {
-            this.openAsText(filePath);
-        }
-    };
-
-    this.openAsText = function(filePath) {
-        try {
-            var content = fs.readFileSync(filePath, 'utf8');
-            this.UIManager.viewport.hide();
-            this.UIManager.showCodeEditor();
-            this.UIManager.codeEditor.setValue(content);
-            
-            var mode = 'javascript';
-            var ext = path.extname(filePath).toLowerCase();
-            if (ext === '.json') mode = 'application/json';
-            else if (ext === '.html') mode = 'text/html';
-            else if (ext === '.css') mode = 'text/css';
-            
-            this.UIManager.codeEditor.setOption("mode", mode);
-            this.UIManager.currentEditingTextFile = filePath;
-            
-        } catch (e) {
-            console.error("Failed to read file as text", e);
-            this.UIManager.alert("Could not open file as text: " + e.message);
-        }
+        Editor.openFileInTab(filePath);
     };
 }

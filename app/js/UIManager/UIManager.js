@@ -30,14 +30,18 @@ function UIManager(sceneManager, viewport, canvas, fileExporter){
 
 UIManager.prototype.showCodeEditor = function(){
 	this.codeEditorBG.style.display = "block"
-	this.propertiesMenu.gameviewProperties[6].setAttribute("isDone", "true")
-	this.propertiesMenu.gameviewProperties[6].value = "Done"
+	if(this.propertiesMenu && this.propertiesMenu.gameviewProperties && this.propertiesMenu.gameviewProperties[6]) {
+		this.propertiesMenu.gameviewProperties[6].setAttribute("isDone", "true")
+		this.propertiesMenu.gameviewProperties[6].value = "Done"
+	}
 }
 
 UIManager.prototype.hideCodeEditor = function(){
 	this.codeEditorBG.style.display = "none"
-	this.propertiesMenu.gameviewProperties[6].setAttribute("isDone", "false")
-	this.propertiesMenu.gameviewProperties[6].value = "Edit"
+	if(this.propertiesMenu && this.propertiesMenu.gameviewProperties && this.propertiesMenu.gameviewProperties[6]) {
+		this.propertiesMenu.gameviewProperties[6].setAttribute("isDone", "false")
+		this.propertiesMenu.gameviewProperties[6].value = "Edit"
+	}
 	this.currentEditingTextFile = null;
 }
 
@@ -337,20 +341,33 @@ UIManager.prototype.updateLayout = function(){
 	if(viewport.isHidden){
 		viewport.hide();
 		this.toolbar.viewButtons[0].style.color = '#000';
-		this.hideCodeEditor();
+		// If we are NOT editing a workspace text file, hide the editor
+		if(!this.currentEditingTextFile) {
+			this.hideCodeEditor();
+		} else {
+			this.codeEditorBG.style.display = "block";
+		}
 	} else {
 		viewport.show();
 		this.toolbar.viewButtons[0].style.color = '#00f';
+		// In scene mode, editor is hidden unless manually opened for a script
 	}
 	
 	this.codeEditorBG.style.height = canvas.height + 'px';
 	this.codeEditorBG.style.width = canvas.width + 'px';
-	this.codeEditorBG.style.top = canvas.offsetTop + 'px';
-	this.codeEditorBG.style.left = canvas.offsetLeft + 'px';
+	this.codeEditorBG.style.top = topOffset + 'px';
+	this.codeEditorBG.style.left = leftOffset + 'px';
+	
+	this.codeEditor.refresh();
+	var ref = this;
+	setTimeout(function() {
+		ref.codeEditor.refresh();
+	}, 100);
 }
 
 UIManager.prototype.resizeLayout = function(){
 	this.updateLayout();
+	this.propertiesMenu.resizeLayout();
 }
 
 

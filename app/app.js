@@ -49,9 +49,11 @@ function parse(data, type){
 	else return null
 }
 
-var Project = function(app, sceneManager){
+var Project = function(app, sceneManager, type = 'scene', textContent = ''){
 	this.app = app;
-	this.sceneManager = sceneManager || new SceneManager();
+	this.type = type; // 'scene' or 'text'
+	this.textContent = textContent;
+	this.sceneManager = sceneManager || (type === 'scene' ? new SceneManager() : null);
 	this.currentFile = {
 		path : '',
 		name : '',
@@ -117,9 +119,16 @@ var App = function(){
 	}
 }
 
-App.prototype.newProject = function(sceneManager){
-	var project = new Project(this, sceneManager);
-	project.lastSavedHash = this.getSceneHash(project);
+App.prototype.newProject = function(sceneManager, type = 'scene', filePath = '', content = ''){
+	var project = new Project(this, sceneManager, type, content);
+	if(filePath){
+		project.currentFile.path = filepath = filePath;
+		project.currentFile.name = path.basename(filepath);
+		project.currentFile.dir = path.dirname(filepath);
+		project.currentFile.nameonly = path.parse(path.basename(filepath)).name;
+		project.currentFile.ext = path.extname(filepath);
+	}
+	project.lastSavedHash = type === 'scene' ? this.getSceneHash(project) : this.getTextHash(content);
 	project.isDirty = false;
 	this.projects.push(project);
 	this.switchProject(this.projects.length - 1);
@@ -128,30 +137,94 @@ App.prototype.newProject = function(sceneManager){
 
 App.prototype.switchProject = function(index){
 	if(index >= 0 && index < this.projects.length){
+		// Save current state before switching
+		if(this.activeProjectIndex !== -1 && this.activeProjectIndex < this.projects.length){
+			var prevProject = this.projects[this.activeProjectIndex];
+			if(prevProject.type === 'text' && this.UIManager && this.UIManager.codeEditor){
+				prevProject.textContent = this.UIManager.codeEditor.getValue();
+			}
+		}
+
 		this.activeProjectIndex = index;
 		var project = this.projects[index];
 		this.sceneManager = project.sceneManager;
 		this.currentFile = project.currentFile;
 		this.exportedFile = project.exportedFile;
 		
-		if(this.viewport) {
-			this.viewport.sceneManager = this.sceneManager;
-			this.viewport.renderer.sceneManager = this.sceneManager;
-		}
 		if(this.UIManager) {
 			this.UIManager.sceneManager = this.sceneManager;
 			this.UIManager.propertiesMenu.sceneManager = this.sceneManager;
 			this.UIManager.toolbar.sceneManager = this.sceneManager;
 			this.UIManager.statusBar.sceneManager = this.sceneManager;
 			this.UIManager.sceneInfo.sceneManager = this.sceneManager;
+
+			if(project.type === 'scene'){
+				this.viewport.show();
+				this.UIManager.hideCodeEditor();
+				if(this.viewport) {
+					this.viewport.sceneManager = this.sceneManager;
+					this.viewport.renderer.sceneManager = this.sceneManager;
+				}
+				this.UIManager.propertiesMenu.updateSceneCollection();
+				this.UIManager.propertiesMenu.updateSelectionProperty();
+				this.UIManager.codeEditor.setValue(this.sceneManager && this.sceneManager.scripts[0] ? this.sceneManager.scripts[0].raw : '');
+			} else {
+				this.viewport.hide();
+				this.UIManager.showCodeEditor();
+				this.UIManager.codeEditor.setValue(project.textContent);
+				// Update CodeMirror mode based on extension
+				var mode = 'javascript';
+				var ext = project.currentFile.ext.toLowerCase();
+				if (ext === '.json') mode = 'application/json';
+				else if (ext === '.html') mode = 'text/html';
+				else if (ext === '.css') mode = 'text/css';
+				this.UIManager.codeEditor.setOption("mode", mode);
+				this.UIManager.currentEditingTextFile = project.currentFile.path;
+			}
 			this.UIManager.updateLayout();
-			this.UIManager.propertiesMenu.updateSceneCollection();
-			this.UIManager.propertiesMenu.updateSelectionProperty();
-			this.UIManager.codeEditor.setValue(this.sceneManager.scripts[0] ? this.sceneManager.scripts[0].raw : '');
 		}
 		this.updateTitle();
 		this.updateTabs();
 	}
+}
+
+App.prototype.openFileInTab = function(filePath){
+	var existing = this.projects.findIndex(p => p.currentFile.path === filePath);
+	if(existing !== -1){
+		this.switchProject(existing);
+		return;
+	}
+
+	var ext = path.extname(filePath).toLowerCase();
+	if(ext === '.ab2e'){
+		try {
+			var content = fs.readFileSync(filePath, 'utf8');
+			var scene = JSON.parse(content);
+			this.newProject(new SceneManager(), 'scene', filePath);
+			this.sceneManager.loadSceneData(scene);
+			return;
+		} catch(e) {
+			console.error("Failed to load .ab2e file", e);
+		}
+	} else if(ext === '.json' || ext === '.json5' || ext === '.pson'){
+		// Try to open as scene first if it's potentially a scene file
+		try {
+			var content = fs.readFileSync(filePath, 'utf8');
+			var scene = null;
+			if(ext == '.pson') scene = from_buffer(fs.readFileSync(filePath), ext);
+			else scene = parse(content, ext);
+			
+			if(scene && (scene.bodies || scene.joints)){ // Heuristic for other JSON-like files
+				this.newProject(new SceneManager(), 'scene', filePath);
+				this.sceneManager.loadSceneData(scene);
+				return;
+			}
+		} catch(e) {}
+	}
+
+	// Default to text if not a scene
+	var text = fs.readFileSync(filePath, 'utf8');
+	this.newProject(null, 'text', filePath, text);
 }
 
 App.prototype.closeProject = function(index){
@@ -185,8 +258,9 @@ App.prototype.updateTabs = function(){
 		if(p.isDirty) tab.classList.add('dirty');
 		
 		var name = p.currentFile.name || 'New Scene';
+		var icon = p.type === 'scene' ? '🎬' : '📄';
 		var unsavedIndicator = p.isDirty ? '<span class="unsaved-dot">●</span>' : '';
-		tab.innerHTML = `<span>${name}${unsavedIndicator}</span><i class="close-tab">×</i>`;
+		tab.innerHTML = `<span class="icon">${icon}</span><span>${name}${unsavedIndicator}</span><i class="close-tab">×</i>`;
 		tab.onclick = (e) => {
 			if(e.target.className === 'close-tab'){
 				ref.closeProject(i);
@@ -698,7 +772,8 @@ App.prototype.on_file_changed = function(){
 App.prototype.saveSession = function(){
 	var session = {
 		activeProjectIndex: this.activeProjectIndex,
-		projects: []
+		projects: [],
+		workspaceRoot: this.UIManager && this.UIManager.workspaceMenu ? this.UIManager.workspaceMenu.workspaceRoot : ''
 	};
 	
 	if(!fs.existsSync('temp')) fs.mkdirSync('temp');
@@ -707,12 +782,21 @@ App.prototype.saveSession = function(){
 		var pData = {
 			path: p.currentFile.path,
 			isDirty: p.isDirty,
-			id: p.id
+			id: p.id,
+			type: p.type
 		};
 		
-		// Always save the data to temp to be safe
-		var tempData = p.sceneManager.getSceneData();
-		fs.writeFileSync(path.join('temp', `project_${p.id}.json`), JSON.stringify(tempData, null, 4));
+		if(p.type === 'scene') {
+			var tempData = p.sceneManager.getSceneData();
+			fs.writeFileSync(path.join('temp', `project_${p.id}.json`), JSON.stringify(tempData, null, 4));
+		} else {
+			var content = p.textContent;
+			// If it's the active text project, get latest from editor
+			if(i === this.activeProjectIndex && this.UIManager && this.UIManager.codeEditor) {
+				content = this.UIManager.codeEditor.getValue();
+			}
+			fs.writeFileSync(path.join('temp', `project_${p.id}.txt`), content);
+		}
 		
 		session.projects.push(pData);
 	});
@@ -724,24 +808,39 @@ App.prototype.loadSession = function(){
 	try {
 		if(!fs.existsSync('session.json')) return;
 		var session = JSON.parse(fs.readFileSync('session.json', 'utf8'));
-		this.projects = [];
 		
+		if(session.workspaceRoot && this.UIManager && this.UIManager.workspaceMenu) {
+			this.UIManager.workspaceMenu.setWorkspaceRoot(session.workspaceRoot);
+		}
+
+		this.projects = [];
 		var activeTempFiles = [];
 		
 		session.projects.forEach((pData, i) => {
-			var sm = new SceneManager();
-			var tempPath = path.join('temp', `project_${pData.id}.json`);
-			activeTempFiles.push(`project_${pData.id}.json`);
-			
-			if(fs.existsSync(tempPath)){
-				var data = JSON.parse(fs.readFileSync(tempPath, 'utf8'));
-				sm.loadSceneData(data);
-			} else if(pData.path && fs.existsSync(pData.path)){
-				var data = JSON.parse(fs.readFileSync(pData.path, 'utf8'));
-				sm.loadSceneData(data);
+			var type = pData.type || 'scene';
+			var project;
+			activeTempFiles.push(`project_${pData.id}.${type === 'scene' ? 'json' : 'txt'}`);
+
+			if(type === 'scene'){
+				var sm = new SceneManager();
+				var tempPath = path.join('temp', `project_${pData.id}.json`);
+				if(fs.existsSync(tempPath)){
+					sm.loadSceneData(JSON.parse(fs.readFileSync(tempPath, 'utf8')));
+				} else if(pData.path && fs.existsSync(pData.path)){
+					sm.loadSceneData(JSON.parse(fs.readFileSync(pData.path, 'utf8')));
+				}
+				project = new Project(this, sm, 'scene');
+			} else {
+				var tempPath = path.join('temp', `project_${pData.id}.txt`);
+				var text = '';
+				if(fs.existsSync(tempPath)){
+					text = fs.readFileSync(tempPath, 'utf8');
+				} else if(pData.path && fs.existsSync(pData.path)){
+					text = fs.readFileSync(pData.path, 'utf8');
+				}
+				project = new Project(this, null, 'text', text);
 			}
-			
-			var project = new Project(this, sm);
+
 			project.id = pData.id;
 			project.currentFile.path = pData.path;
 			if(pData.path){
@@ -752,9 +851,7 @@ App.prototype.loadSession = function(){
 			}
 			
 			this.projects.push(project);
-			
-			// Recalculate hash after loading
-			project.lastSavedHash = this.getSceneHash(project);
+			project.lastSavedHash = project.type === 'scene' ? this.getSceneHash(project) : this.getTextHash(project.textContent);
 			project.isDirty = pData.isDirty;
 		});
 		
@@ -822,6 +919,26 @@ App.prototype.getSettings = function(){
 	}
 	return obj
 };
+
+App.prototype.getTextHash = function(text){
+	return crypto.createHash('md5').update(text || '').digest('hex');
+}
+
+App.prototype.getSceneHash = function(project){
+	var data = project.sceneManager.getSceneData();
+	return crypto.createHash('md5').update(this.stableStringify(data)).digest('hex');
+}
+
+App.prototype.stableStringify = function(obj) {
+    var allKeys = [];
+    JSON.stringify(obj, function(key, value) {
+        allKeys.push(key);
+        return value;
+    });
+    allKeys.sort();
+    return JSON.stringify(obj, allKeys);
+}
+
 
 
 var Editor = new App();

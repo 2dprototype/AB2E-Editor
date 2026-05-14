@@ -296,10 +296,10 @@ UIManager.prototype.updateLayout = function(){
 	// Workspace Menu
 	if(this.workspaceMenu.isHidden){
 		this.workspaceMenu.hide();
-		this.toolbar.viewButtons[2].style.color = '#000';
+		this.toolbar.viewButtons[1].style.color = '#000';
 	} else {
 		this.workspaceMenu.show();
-		this.toolbar.viewButtons[2].style.color = '#00f';
+		this.toolbar.viewButtons[1].style.color = '#00f';
 		workspaceMenu.style.width = leftOffset + 'px';
 		workspaceMenu.style.height = (winH - topOffset) + 'px';
 		workspaceMenu.style.top = topOffset + 'px';
@@ -309,10 +309,10 @@ UIManager.prototype.updateLayout = function(){
 	// Properties Menu
 	if(this.propertiesMenu.isHidden){
 		this.propertiesMenu.hide();
-		this.toolbar.viewButtons[1].style.color = '#000';
+		this.toolbar.viewButtons[0].style.color = '#000';
 	} else {
 		this.propertiesMenu.show();
-		this.toolbar.viewButtons[1].style.color = '#00f';
+		this.toolbar.viewButtons[0].style.color = '#00f';
 		propertiesMenu.style.top = topOffset + 'px';
 		propertiesMenu.style.height = (winH - topOffset) + 'px';
 	}
@@ -320,10 +320,10 @@ UIManager.prototype.updateLayout = function(){
 	// Status Bar
 	if(this.statusBar.isHidden){
 		this.statusBar.hide();
-		this.toolbar.viewButtons[3].style.color = '#000';
+		this.toolbar.viewButtons[2].style.color = '#000';
 	} else {
 		this.statusBar.show();
-		this.toolbar.viewButtons[3].style.color = '#00f';
+		this.toolbar.viewButtons[2].style.color = '#00f';
 		statusBar.style.left = leftOffset + 'px';
 		statusBar.style.width = (winW - leftOffset - rightOffset) + 'px';
 	}
@@ -340,7 +340,6 @@ UIManager.prototype.updateLayout = function(){
 	
 	if(viewport.isHidden){
 		viewport.hide();
-		this.toolbar.viewButtons[0].style.color = '#000';
 		// If we are NOT editing a workspace text file, hide the editor
 		if(!this.currentEditingTextFile) {
 			this.hideCodeEditor();
@@ -349,7 +348,6 @@ UIManager.prototype.updateLayout = function(){
 		}
 	} else {
 		viewport.show();
-		this.toolbar.viewButtons[0].style.color = '#00f';
 		// In scene mode, editor is hidden unless manually opened for a script
 	}
 	
@@ -360,9 +358,9 @@ UIManager.prototype.updateLayout = function(){
 	
 	this.codeEditor.refresh();
 	var ref = this;
-	setTimeout(function() {
-		ref.codeEditor.refresh();
-	}, 100);
+	// setTimeout(function() {
+		// ref.codeEditor.refresh();
+	// }, 100);
 }
 
 UIManager.prototype.resizeLayout = function(){

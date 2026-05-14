@@ -67,6 +67,8 @@ var Project = function(app, sceneManager){
 		ext : ''
 	}
 	this.id = Math.random().toString(36).substr(2, 9);
+	this.lastSavedHash = '';
+	this.isDirty = false;
 }
 
 var App = function(){
@@ -91,10 +93,6 @@ var App = function(){
 	document.body.appendChild(this.terminal.html);
 	
 	this.canvas = document.getElementById("main-canvas");
-	
-	// Initialize with one project
-	this.newProject();
-
 	this.viewport = new Viewport(this.canvas, this.sceneManager);
 	this.fileExporter = new fileExporter(this.sceneManager, this);
 	this.UIManager = new UIManager(this.sceneManager, this.viewport, this.canvas, this.fileExporter);
@@ -109,10 +107,20 @@ var App = function(){
 	ipcRenderer.on('open-file', (event, args) => {
 		ref.handleCLIArgs(args);
 	});
+
+	// Check for saved session
+	if(fs.existsSync('session.json')){
+		this.loadSession();
+	} else {
+		// Initialize with one project if no session
+		this.newProject();
+	}
 }
 
 App.prototype.newProject = function(sceneManager){
 	var project = new Project(this, sceneManager);
+	project.lastSavedHash = this.getSceneHash(project);
+	project.isDirty = false;
 	this.projects.push(project);
 	this.switchProject(this.projects.length - 1);
 	this.updateTabs();
@@ -139,12 +147,21 @@ App.prototype.switchProject = function(index){
 			this.UIManager.updateLayout();
 			this.UIManager.propertiesMenu.updateSceneCollection();
 			this.UIManager.propertiesMenu.updateSelectionProperty();
+			this.UIManager.codeEditor.setValue(this.sceneManager.scripts[0] ? this.sceneManager.scripts[0].raw : '');
 		}
+		this.updateTitle();
 		this.updateTabs();
 	}
 }
 
 App.prototype.closeProject = function(index){
+	var project = this.projects[index];
+	if(project.isDirty){
+		var name = project.currentFile.name || 'New Scene';
+		var response = this.UIManager.getConfirmation(`Do you want to close "${name}"?`, "Unsaved changes will be lost.");
+		if(response != 0) return; // 0 is usually 'Yes' or 'OK' in this app's implementation
+	}
+
 	if(this.projects.length > 1){
 		this.projects.splice(index, 1);
 		if(this.activeProjectIndex >= this.projects.length){
@@ -165,8 +182,11 @@ App.prototype.updateTabs = function(){
 	this.projects.forEach((p, i) => {
 		var tab = document.createElement('div');
 		tab.className = 'tab' + (i === this.activeProjectIndex ? ' active' : '');
+		if(p.isDirty) tab.classList.add('dirty');
+		
 		var name = p.currentFile.name || 'New Scene';
-		tab.innerHTML = `<span>${name}</span><i class="close-tab">×</i>`;
+		var unsavedIndicator = p.isDirty ? '<span class="unsaved-dot">●</span>' : '';
+		tab.innerHTML = `<span>${name}${unsavedIndicator}</span><i class="close-tab">×</i>`;
 		tab.onclick = (e) => {
 			if(e.target.className === 'close-tab'){
 				ref.closeProject(i);
@@ -224,11 +244,18 @@ App.prototype.loadSceneFromFile = function(filepath){
 			}
 			
 			this.newProject();
+			var project = this.projects[this.activeProjectIndex];
+			
 			if(ext == '.ab2e') this.setCurrentFile(filepath);
 			else this.resetCurrentFile();
 
 			this.sceneManager.newScene();
 			this.sceneManager.loadSceneData(scene);
+			
+			// Initialize saved hash
+			project.lastSavedHash = this.getSceneHash(project);
+			project.isDirty = false;
+
 			this.load_config_file();
 			this.UIManager.propertiesMenu.updateSceneCollection();
 			this.UIManager.propertiesMenu.updateSelectionProperty();
@@ -386,7 +413,7 @@ App.prototype.init = function(){
 		ref.UIManager.toolbar.updateCustomScripts();
 	});
 	window.onbeforeunload = function(){
-		fs.writeFileSync('unsaved_scene.json', stringify(ref.sceneManager.getSceneData(), '.json'));
+		ref.saveSession();
 		fs.writeFileSync('settings.json', stringify(ref.getSettings(), '.json'));
 		ref.make_config_file();
 	}
@@ -473,7 +500,12 @@ App.prototype.setCurrentFile = function(filepath){
 	this.currentFile.dir = path.dirname(filepath);
 	this.currentFile.nameonly = path.parse(path.basename(filepath)).name;
 	this.currentFile.ext = path.extname(filepath);
-	document.title = this.currentFile.path;
+	
+	var project = this.projects[this.activeProjectIndex];
+	project.lastSavedHash = this.getSceneHash(project);
+	project.isDirty = false;
+	
+	this.updateTitle();
 	this.updateTabs();
 };
 
@@ -484,7 +516,12 @@ App.prototype.resetCurrentFile = function(){
 	this.currentFile.nameonly = '';
 	this.currentFile.ext = '';
 	this.resetExportedFile();
-	document.title =  `AB2E Editor ${this.version}`;
+	
+	var project = this.projects[this.activeProjectIndex];
+	project.lastSavedHash = ''; // Reset saved hash for new files
+	project.isDirty = true; // New unsaved file is dirty by default
+	
+	this.updateTitle();
 	this.updateTabs();
 };
 
@@ -585,15 +622,45 @@ App.prototype.runScript = function(filepath, type = ".js"){
 		ref.terminal.show();
 	}
 };
+App.prototype.stableStringify = function(obj){
+	var allKeys = [];
+	JSON.stringify(obj, function(key, value) {
+		allKeys.push(key);
+		return value;
+	});
+	allKeys.sort();
+	return JSON.stringify(obj, allKeys);
+}
 
+App.prototype.getSceneHash = function(project){
+	var sceneData = project.sceneManager.saveScene();
+	return create_hash_sha1(this.stableStringify(sceneData));
+}
+
+App.prototype.updateTitle = function(){
+	var project = this.projects[this.activeProjectIndex];
+	if(!project) return;
+	
+	var title = '';
+	if(project.currentFile.path != ''){
+		title = project.currentFile.path;
+	}
+	else{
+		title = `New Scene - AB2E Editor ${this.version}`;
+	}
+	
+	if(project.isDirty){
+		title += '*';
+	}
+	
+	document.title = title;
+}
 
 App.prototype.is_current_file_saved = function(){
-	if(this.currentFile.path != '' && fs.existsSync(this.currentFile.path)){
-		var old_file = JSON.stringify(JSON.parse(fs.readFileSync(this.currentFile.path, 'utf8')).scene);
-		var new_file = JSON.stringify(this.sceneManager.saveScene());
-		var old_hash = create_hash_sha1(old_file);
-		var new_hash = create_hash_sha1(new_file);
-		if(old_hash == new_hash) return true
+	var project = this.projects[this.activeProjectIndex];
+	if(project.currentFile.path != '' && fs.existsSync(project.currentFile.path)){
+		var currentHash = this.getSceneHash(project);
+		if(project.lastSavedHash == currentHash) return true
 		else return false	    
 	}
 	else{
@@ -602,19 +669,102 @@ App.prototype.is_current_file_saved = function(){
 }
 
 App.prototype.on_file_changed = function(){
-	this.sceneManager.recordHistory();
-	if(this.currentFile.path != ''){
-		if(this.is_current_file_saved()){
-			document.title = this.currentFile.path;
-			this.UIManager.toolbar.fileTools[0].style.color = '#ffffff80';
-		}
-		else{
-			document.title =  `${this.currentFile.path}*`;
-			this.UIManager.toolbar.fileTools[0].style.color = '#ffffff';
-		}	    
+	var project = this.projects[this.activeProjectIndex];
+	if(!project) return;
+	
+	var currentHash = this.getSceneHash(project);
+	if(project.currentFile.path != '' && project.lastSavedHash == currentHash){
+		project.isDirty = false;
 	}
 	else{
-	    this.UIManager.toolbar.fileTools[0].style.color = '#ffffff';
+		project.isDirty = true;
+	}
+	
+	this.updateTitle();
+	this.updateTabs();
+	
+	if(this.UIManager && this.UIManager.toolbar){
+		this.UIManager.toolbar.fileTools[0].style.color = project.isDirty ? '#ffffff' : '#ffffff80';
+	}
+}
+
+App.prototype.saveSession = function(){
+	var session = {
+		activeProjectIndex: this.activeProjectIndex,
+		projects: []
+	};
+	
+	if(!fs.existsSync('temp')) fs.mkdirSync('temp');
+	
+	this.projects.forEach((p, i) => {
+		var pData = {
+			path: p.currentFile.path,
+			isDirty: p.isDirty,
+			id: p.id
+		};
+		
+		// Always save the data to temp to be safe
+		var tempData = p.sceneManager.getSceneData();
+		fs.writeFileSync(path.join('temp', `project_${p.id}.json`), JSON.stringify(tempData, null, 4));
+		
+		session.projects.push(pData);
+	});
+	
+	fs.writeFileSync('session.json', JSON.stringify(session, null, 4));
+}
+
+App.prototype.loadSession = function(){
+	try {
+		if(!fs.existsSync('session.json')) return;
+		var session = JSON.parse(fs.readFileSync('session.json', 'utf8'));
+		this.projects = [];
+		
+		var activeTempFiles = [];
+		
+		session.projects.forEach((pData, i) => {
+			var sm = new SceneManager();
+			var tempPath = path.join('temp', `project_${pData.id}.json`);
+			activeTempFiles.push(`project_${pData.id}.json`);
+			
+			if(fs.existsSync(tempPath)){
+				var data = JSON.parse(fs.readFileSync(tempPath, 'utf8'));
+				sm.loadSceneData(data);
+			} else if(pData.path && fs.existsSync(pData.path)){
+				var data = JSON.parse(fs.readFileSync(pData.path, 'utf8'));
+				sm.loadSceneData(data);
+			}
+			
+			var project = new Project(this, sm);
+			project.id = pData.id;
+			project.currentFile.path = pData.path;
+			if(pData.path){
+				project.currentFile.name = path.basename(pData.path);
+				project.currentFile.dir = path.dirname(pData.path);
+				project.currentFile.nameonly = path.parse(path.basename(pData.path)).name;
+				project.currentFile.ext = path.extname(pData.path);
+			}
+			
+			this.projects.push(project);
+			
+			// Recalculate hash after loading
+			project.lastSavedHash = this.getSceneHash(project);
+			project.isDirty = pData.isDirty;
+		});
+		
+		// Cleanup old temp files
+		if(fs.existsSync('temp')){
+			var files = fs.readdirSync('temp');
+			files.forEach(file => {
+				if(!activeTempFiles.includes(file)){
+					try { fs.unlinkSync(path.join('temp', file)); } catch(e){}
+				}
+			});
+		}
+		
+		this.switchProject(session.activeProjectIndex || 0);
+	} catch(e) {
+		console.error("Failed to load session", e);
+		this.newProject();
 	}
 }
 

@@ -736,3 +736,16 @@ table tbody td span {
     color: #fff;
     padding: 0;
 }
+
+.unsaved-dot {
+    color: #ffcc00;
+    font-size: 12px;
+    margin-left: 4px;
+    line-height: 0;
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.tab.dirty span {
+    font-style: italic;
+}

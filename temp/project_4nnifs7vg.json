@@ -1,0 +1,133 @@
+{
+    "info": {
+        "dateCreated": null,
+        "lastModified": 1778750446965,
+        "favourite": false,
+        "comment": "",
+        "name": "",
+        "author": ""
+    },
+    "scene": {
+        "bodies": [
+            {
+                "id": "D3XRRE7UAZ9EYRBN",
+                "name": "body_58",
+                "userData": null,
+                "shapes": [
+                    {
+                        "id": "7BCPI8C0NTTHY1TX",
+                        "name": "shape_0",
+                        "shapeType": 0,
+                        "position": [
+                            -197,
+                            -93.5
+                        ],
+                        "scaleXY": [
+                            1,
+                            1
+                        ],
+                        "rotation": 0,
+                        "vertices": [
+                            {
+                                "x": -222,
+                                "y": -118.5,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": -172,
+                                "y": -118.5,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": -172,
+                                "y": -68.5,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": -222,
+                                "y": -68.5,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            }
+                        ],
+                        "bounds": [
+                            -197,
+                            -93.5,
+                            50,
+                            50
+                        ],
+                        "centroid": [
+                            -197,
+                            -93.5
+                        ],
+                        "isSelected": false,
+                        "isHover": false,
+                        "inEditMode": false,
+                        "friction": 1,
+                        "restitution": 0.25,
+                        "density": 1,
+                        "isSensor": false,
+                        "maskBits": 65535,
+                        "categoryBits": 1,
+                        "groupIndex": 0,
+                        "userData": null,
+                        "width": 50,
+                        "height": 50
+                    }
+                ],
+                "position": [
+                    -197,
+                    -93.5
+                ],
+                "scaleXY": [
+                    1,
+                    1
+                ],
+                "rotation": 0,
+                "bounds": [
+                    -197,
+                    -93.5,
+                    50,
+                    50
+                ],
+                "isSelected": false,
+                "bodyType": 2,
+                "isBullet": false,
+                "isFixedRotation": false,
+                "linearDamping": 0,
+                "angularDamping": 0,
+                "linearVelocity": [
+                    0,
+                    0
+                ],
+                "angularVelocity": 0,
+                "isAwake": true,
+                "isActive": true,
+                "gravityScale": 1,
+                "cloneOf": null,
+                "selectedSprite": 0,
+                "sprites": []
+            }
+        ],
+        "joints": [],
+        "particles": [],
+        "world": {
+            "gravity": [
+                0,
+                9.8
+            ],
+            "allowSleep": true,
+            "debugDraw": true,
+            "drawScale": 30,
+            "drawSprites": true
+        },
+        "scripts": []
+    }
+}

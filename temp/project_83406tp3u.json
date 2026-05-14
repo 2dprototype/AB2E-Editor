@@ -1,0 +1,272 @@
+{
+    "info": {
+        "dateCreated": null,
+        "lastModified": 1778750446971,
+        "favourite": false,
+        "comment": "",
+        "name": "",
+        "author": ""
+    },
+    "scene": {
+        "bodies": [
+            {
+                "id": "6H2YT1OK9YXTEE3D",
+                "name": "body_59",
+                "userData": null,
+                "shapes": [
+                    {
+                        "id": "J1TVQUBJZCQNNPX9",
+                        "name": "shape_1",
+                        "shapeType": 1,
+                        "position": [
+                            129,
+                            -11.5
+                        ],
+                        "scaleXY": [
+                            7.012248953247071,
+                            0.9125
+                        ],
+                        "rotation": 0,
+                        "vertices": [
+                            {
+                                "x": 304.30622383117674,
+                                "y": -11.5,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 298.3328091077458,
+                                "y": 33.8725894525139,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 280.8196432793201,
+                                "y": 76.15311191558837,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 252.96021965523187,
+                                "y": 112.46021965523184,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 216.65311191558837,
+                                "y": 140.31964327932002,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 174.3725894525139,
+                                "y": 157.83280910774576,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 129,
+                                "y": 163.80622383117674,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 83.62741054748614,
+                                "y": 157.83280910774576,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 41.34688808441166,
+                                "y": 140.3196432793201,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 5.039780344767905,
+                                "y": 112.46021965523184,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": -22.819643279319962,
+                                "y": 76.15311191558837,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": -40.33280910774556,
+                                "y": 33.87258945251399,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": -46.30622383117668,
+                                "y": -11.5,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": -40.33280910774556,
+                                "y": -56.87258945251389,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": -22.819643279319962,
+                                "y": -99.15311191558834,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 5.039780344767905,
+                                "y": -135.4602196552317,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 41.34688808441166,
+                                "y": -163.31964327932002,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 83.62741054748614,
+                                "y": -180.8328091077458,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 129,
+                                "y": -186.80622383117674,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 174.3725894525139,
+                                "y": -180.8328091077458,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 216.65311191558837,
+                                "y": -163.31964327932002,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 252.96021965523187,
+                                "y": -135.46021965523187,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 280.81964327931996,
+                                "y": -99.15311191558845,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 298.3328091077458,
+                                "y": -56.87258945251412,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            }
+                        ],
+                        "bounds": [
+                            129.00000000000003,
+                            -11.5,
+                            350.6124476623534,
+                            350.6124476623535
+                        ],
+                        "centroid": [
+                            129,
+                            -11.5
+                        ],
+                        "isSelected": false,
+                        "isHover": false,
+                        "inEditMode": false,
+                        "friction": 1,
+                        "restitution": 0.25,
+                        "density": 1,
+                        "isSensor": false,
+                        "maskBits": 65535,
+                        "categoryBits": 1,
+                        "groupIndex": 0,
+                        "userData": null,
+                        "radius": 175.30622383117674
+                    }
+                ],
+                "position": [
+                    129,
+                    -11.5
+                ],
+                "scaleXY": [
+                    7.012248953247071,
+                    0.9125
+                ],
+                "rotation": 0,
+                "bounds": [
+                    129.00000000000003,
+                    -11.5,
+                    350.6124476623534,
+                    350.6124476623535
+                ],
+                "isSelected": false,
+                "bodyType": 2,
+                "isBullet": false,
+                "isFixedRotation": false,
+                "linearDamping": 0,
+                "angularDamping": 0,
+                "linearVelocity": [
+                    0,
+                    0
+                ],
+                "angularVelocity": 0,
+                "isAwake": true,
+                "isActive": true,
+                "gravityScale": 1,
+                "cloneOf": null,
+                "selectedSprite": 0,
+                "sprites": []
+            }
+        ],
+        "joints": [],
+        "particles": [],
+        "world": {
+            "gravity": [
+                0,
+                9.8
+            ],
+            "allowSleep": true,
+            "debugDraw": true,
+            "drawScale": 30,
+            "drawSprites": true
+        },
+        "scripts": []
+    }
+}

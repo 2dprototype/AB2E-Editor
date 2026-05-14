@@ -261,18 +261,20 @@ UIManager.prototype.updateLayout = function(){
 	var propertiesMenu = this.propertiesMenu.element;
 	var canvas = this.canvas;
 	var viewport = this.viewport;
+	var tabBar = document.getElementById('tab-container');
+	var tabBarHeight = tabBar ? tabBar.offsetHeight : 0;
 	
 	if(this.statusBar.isHidden){
 		this.statusBar.hide();
 		this.toolbar.viewButtons[2].style.color = '#000';
-		canvas.height = window.innerHeight - (toolbar.offsetHeight + statusBar.offsetHeight);
+		canvas.height = window.innerHeight - (toolbar.offsetHeight + statusBar.offsetHeight + tabBarHeight);
 		viewport.resetPanning();
 		viewport.getRenderer().setStageWidthHeight(canvas.width, canvas.height);
 	}
 	else{
 		this.statusBar.show();
 		this.toolbar.viewButtons[2].style.color = '#00f';
-		canvas.height = window.innerHeight - (toolbar.offsetHeight + statusBar.offsetHeight);
+		canvas.height = window.innerHeight - (toolbar.offsetHeight + statusBar.offsetHeight + tabBarHeight);
 		viewport.resetPanning();
 		viewport.getRenderer().setStageWidthHeight(canvas.width, canvas.height);
 	}
@@ -323,9 +325,11 @@ UIManager.prototype.resizeLayout = function(){
 	var statusBar = this.statusBar.element;
 	var propertiesMenu = this.propertiesMenu.element;
 	var canvas = this.canvas;
+	var tabBar = document.getElementById('tab-container');
+	var tabBarHeight = tabBar ? tabBar.offsetHeight : 0;
 	
-	propertiesMenu.style.height = window.innerHeight - toolbar.offsetHeight;
-	propertiesMenu.style.top = toolbar.offsetHeight;
+	propertiesMenu.style.height = window.innerHeight - (toolbar.offsetHeight + tabBarHeight);
+	propertiesMenu.style.top = toolbar.offsetHeight + tabBarHeight;
 	this.propertiesMenu.resizeLayout();
 	
 	canvas.width = window.innerWidth - propertiesMenu.offsetWidth;
@@ -485,26 +489,7 @@ UIManager.prototype.loadScene = function(){
 		var file = ref.openFile(options);
 		var filepath = file.filePaths[0];
 		if(filepath != null){
-			var ext = path.extname(filepath);
-			if(fs.existsSync(filepath)){
-				var scene = null;
-				if(ext == '.ab2e') scene = JSON.parse(fs.readFileSync(filepath, 'utf8'));
-				else if(ext == '.pson') scene = from_buffer(fs.readFileSync(filepath), ext);
-				else scene = parse(fs.readFileSync(filepath, 'utf8'), ext);
-				if(scene != null){
-					if(ext == '.ab2e') Editor.setCurrentFile(filepath);
-					else{
-						Editor.resetCurrentFile();
-					} 
-					sceneManager.newScene();
-					sceneManager.loadSceneData(scene);
-					Editor.load_config_file();
-				}
-				ref.propertiesMenu.updateSceneCollection();
-				ref.propertiesMenu.updateSelectionProperty();
-				ref.toolbar.update_favourite_button();	
-				Editor.on_file_changed();
-			}
+			Editor.loadSceneFromFile(filepath);
 		}
 	}
 	else if(response == 1){

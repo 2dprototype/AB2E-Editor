@@ -49,8 +49,9 @@ function parse(data, type){
 	else return null
 }
 
-var App = function(){
-	var ref = this;
+var Project = function(app, sceneManager){
+	this.app = app;
+	this.sceneManager = sceneManager || new SceneManager();
 	this.currentFile = {
 		path : '',
 		name : '',
@@ -65,6 +66,15 @@ var App = function(){
 		nameonly : '',
 		ext : ''
 	}
+	this.id = Math.random().toString(36).substr(2, 9);
+}
+
+var App = function(){
+	var ref = this;
+	
+	this.projects = [];
+	this.activeProjectIndex = -1;
+
 	this.custom_execute = '';
 	this.terminal_mode = 'console';
 	this.terminal = new terminal('terminal');
@@ -80,7 +90,10 @@ var App = function(){
 	document.body.appendChild(this.terminal.html);
 	
 	this.canvas = document.getElementById("main-canvas");
-	this.sceneManager = new SceneManager();
+	
+	// Initialize with one project
+	this.newProject();
+
 	this.viewport = new Viewport(this.canvas, this.sceneManager);
 	this.fileExporter = new fileExporter(this.sceneManager, this);
 	this.UIManager = new UIManager(this.sceneManager, this.viewport, this.canvas, this.fileExporter);
@@ -88,7 +101,168 @@ var App = function(){
 	this.gameView = null;
 	this.init();
 
+	// CLI handling
+	var args = ipcRenderer.sendSync('get-args');
+	this.handleCLIArgs(args);
+
+	ipcRenderer.on('open-file', (event, args) => {
+		ref.handleCLIArgs(args);
+	});
 }
+
+App.prototype.newProject = function(sceneManager){
+	var project = new Project(this, sceneManager);
+	this.projects.push(project);
+	this.switchProject(this.projects.length - 1);
+	this.updateTabs();
+}
+
+App.prototype.switchProject = function(index){
+	if(index >= 0 && index < this.projects.length){
+		this.activeProjectIndex = index;
+		var project = this.projects[index];
+		this.sceneManager = project.sceneManager;
+		this.currentFile = project.currentFile;
+		this.exportedFile = project.exportedFile;
+		
+		if(this.viewport) {
+			this.viewport.sceneManager = this.sceneManager;
+			this.viewport.renderer.sceneManager = this.sceneManager;
+		}
+		if(this.UIManager) {
+			this.UIManager.sceneManager = this.sceneManager;
+			this.UIManager.propertiesMenu.sceneManager = this.sceneManager;
+			this.UIManager.toolbar.sceneManager = this.sceneManager;
+			this.UIManager.statusBar.sceneManager = this.sceneManager;
+			this.UIManager.sceneInfo.sceneManager = this.sceneManager;
+			this.UIManager.updateLayout();
+			this.UIManager.propertiesMenu.updateSceneCollection();
+			this.UIManager.propertiesMenu.updateSelectionProperty();
+		}
+		this.updateTabs();
+	}
+}
+
+App.prototype.closeProject = function(index){
+	if(this.projects.length > 1){
+		this.projects.splice(index, 1);
+		if(this.activeProjectIndex >= this.projects.length){
+			this.activeProjectIndex = this.projects.length - 1;
+		}
+		this.switchProject(this.activeProjectIndex);
+	} else {
+		this.projects[0] = new Project(this);
+		this.switchProject(0);
+	}
+	this.updateTabs();
+}
+
+App.prototype.updateTabs = function(){
+	var tabContainer = document.getElementById('tab-container');
+	tabContainer.innerHTML = '';
+	var ref = this;
+	this.projects.forEach((p, i) => {
+		var tab = document.createElement('div');
+		tab.className = 'tab' + (i === this.activeProjectIndex ? ' active' : '');
+		var name = p.currentFile.name || 'New Scene';
+		tab.innerHTML = `<span>${name}</span><i class="close-tab">×</i>`;
+		tab.onclick = (e) => {
+			if(e.target.className === 'close-tab'){
+				ref.closeProject(i);
+			} else {
+				ref.switchProject(i);
+			}
+		};
+		tabContainer.appendChild(tab);
+	});
+	
+	// Add button
+	var addTab = document.createElement('div');
+	addTab.className = 'tab add-tab';
+	addTab.innerHTML = '+';
+	addTab.onclick = () => ref.newProject();
+	tabContainer.appendChild(addTab);
+}
+
+App.prototype.handleCLIArgs = function(args){
+	if(!args) return;
+	for(var i = 0; i < args.length; i++){
+		var arg = args[i];
+		if(arg === '--export'){
+			var input = args[i+1];
+			var output = args[i+2];
+			if(input && output){
+				this.headlessExport(input, output);
+				return;
+			}
+		}
+		// Handle file paths (excluding Electron and script paths)
+		if(arg.endsWith('.ab2e') || arg.endsWith('.json') || arg.endsWith('.json5') || arg.endsWith('.pson')){
+			if(fs.existsSync(arg)){
+				this.loadSceneFromFile(arg);
+			}
+		}
+	}
+}
+
+App.prototype.loadSceneFromFile = function(filepath){
+	var ref = this;
+	if(fs.existsSync(filepath)){
+		var ext = path.extname(filepath);
+		var scene = null;
+		if(ext == '.ab2e') scene = JSON.parse(fs.readFileSync(filepath, 'utf8'));
+		else if(ext == '.pson') scene = from_buffer(fs.readFileSync(filepath), ext);
+		else scene = parse(fs.readFileSync(filepath, 'utf8'), ext);
+
+		if(scene != null){
+			// Check if already open
+			var existing = this.projects.findIndex(p => p.currentFile.path === filepath);
+			if(existing !== -1){
+				this.switchProject(existing);
+				return;
+			}
+			
+			this.newProject();
+			if(ext == '.ab2e') this.setCurrentFile(filepath);
+			else this.resetCurrentFile();
+
+			this.sceneManager.newScene();
+			this.sceneManager.loadSceneData(scene);
+			this.load_config_file();
+			this.UIManager.propertiesMenu.updateSceneCollection();
+			this.UIManager.propertiesMenu.updateSelectionProperty();
+			this.UIManager.toolbar.update_favourite_button();
+			this.on_file_changed();
+		}
+	}
+}
+
+App.prototype.headlessExport = function(input, output){
+	var ref = this;
+	if(fs.existsSync(input)){
+		var ext = path.extname(input);
+		var scene = null;
+		try {
+			if(ext == '.ab2e') scene = JSON.parse(fs.readFileSync(input, 'utf8'));
+			else if(ext == '.pson') scene = from_buffer(fs.readFileSync(input), ext);
+			else scene = parse(fs.readFileSync(input, 'utf8'), ext);
+			
+			if(scene){
+				var sm = new SceneManager();
+				sm.loadSceneData(scene);
+				var exported = sm.exportWorld(false);
+				fs.writeFileSync(output, JSON.stringify(exported, null, 4));
+				console.log(`Exported ${input} to ${output}`);
+				ipcRenderer.sendSync('alert-message', `Exported ${input} to ${output}`);
+				window.close();
+			}
+		} catch(e) {
+			ipcRenderer.sendSync('alert-message', `Export failed: ${e.message}`);
+			window.close();
+		}
+	}
+}
+
 
 
 App.prototype.init = function(){
@@ -290,6 +464,7 @@ App.prototype.setCurrentFile = function(filepath){
 	this.currentFile.nameonly = path.parse(path.basename(filepath)).name;
 	this.currentFile.ext = path.extname(filepath);
 	document.title = this.currentFile.path;
+	this.updateTabs();
 };
 
 App.prototype.resetCurrentFile = function(){
@@ -300,6 +475,7 @@ App.prototype.resetCurrentFile = function(){
 	this.currentFile.ext = '';
 	this.resetExportedFile();
 	document.title =  `AB2E Editor ${this.version}`;
+	this.updateTabs();
 };
 
 App.prototype.setExportedFile = function(filepath, ext = ''){

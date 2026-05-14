@@ -3,12 +3,13 @@ const fs = require('fs');
 const url = require('url');
 const path = require('path');
 
+let win;
 
 function createWindow(){
 	
-	const win = new BrowserWindow({
-		width  : 800,
-		height : 600,
+	win = new BrowserWindow({
+		width  : 1280,
+		height : 720,
 		icon: __dirname + '/icon/icon.ico',
 		webPreferences: {
             nodeIntegration: true,
@@ -20,7 +21,22 @@ function createWindow(){
 	
 }
 
-app.whenReady().then(function(){
+const gotTheLock = app.requestSingleInstanceLock()
+
+if (!gotTheLock) {
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // Someone tried to run a second instance, we should focus our window.
+    if (win) {
+      if (win.isMinimized()) win.restore()
+      win.focus()
+	  // Send the command line arguments to the renderer
+	  win.webContents.send('open-file', commandLine);
+    }
+  })
+
+  app.whenReady().then(function(){
 	createWindow();
 	
 	ipcMain.on('getFilePath-message', (event, options = {}) => {
@@ -54,5 +70,11 @@ app.whenReady().then(function(){
 		event.returnValue = response;
 	});
 
-});
+	ipcMain.on('get-args', (event) => {
+		event.returnValue = process.argv;
+	});
+
+  });
+}
+
 

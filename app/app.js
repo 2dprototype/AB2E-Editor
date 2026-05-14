@@ -331,7 +331,6 @@ App.prototype.loadSceneFromFile = function(filepath){
 			project.lastSavedHash = this.getSceneHash(project);
 			project.isDirty = false;
 
-			this.load_config_file();
 			this.UIManager.propertiesMenu.updateSceneCollection();
 			this.UIManager.propertiesMenu.updateSelectionProperty();
 			this.UIManager.toolbar.update_favourite_button();
@@ -631,7 +630,6 @@ App.prototype.alert = function(text){
 App.prototype.version = "1.0.0"
 
 App.prototype.get_config_data = function(){
-	var sceneManager = this.sceneManager;
 	var viewport = this.viewport;
 	var inputHandler = viewport.inputHandler;
 	
@@ -654,35 +652,43 @@ App.prototype.get_config_data = function(){
 }
 
 App.prototype.make_config_file = function(){
-	if(this.currentFile.dir != ''){
-		var filename = this.currentFile.nameonly + '.config.ini';
-		var filepath = path.join(this.currentFile.dir, filename);
+	var workspaceRoot = this.UIManager && this.UIManager.workspaceMenu ? this.UIManager.workspaceMenu.workspaceRoot : '';
+	if(workspaceRoot != ''){
+		var filepath = path.join(workspaceRoot, '.ab2eproj.ini');
 		var data = ini.stringify(this.get_config_data());
 		fs.writeFileSync(filepath, data);
 	}
 }
 
 App.prototype.load_config_file = function(){
-	var filename = this.currentFile.nameonly + '.config.ini';
-	var filepath = path.join(this.currentFile.dir, filename);
-	if(fs.existsSync(filepath)){
-		var data = fs.readFileSync(filepath, 'utf8');
-		var obj = ini.parse(data);
-		this.set_config(obj);
+	var workspaceRoot = this.UIManager && this.UIManager.workspaceMenu ? this.UIManager.workspaceMenu.workspaceRoot : '';
+	if(workspaceRoot != ''){
+		var filepath = path.join(workspaceRoot, '.ab2eproj.ini');
+		if(fs.existsSync(filepath)){
+			try {
+				var data = fs.readFileSync(filepath, 'utf8');
+				var obj = ini.parse(data);
+				this.set_config(obj);
+			} catch(e) {
+				console.error("Failed to parse .ab2eproj.ini", e);
+			}
+		}
 	}
 }
 
 App.prototype.set_config = function(obj){
-	var sceneManager = this.sceneManager;
+	if(!obj || !obj.viewport || !obj.viewport.inputHandler) return;
+	
 	var viewport = this.viewport;
 	var inputHandler = viewport.inputHandler;
 	var UIManager = this.UIManager;
 	
-	inputHandler.transformTool = obj.viewport.inputHandler.transformTool;
-	inputHandler.pivotMode = obj.viewport.inputHandler.pivotMode;
-	inputHandler.SNAPPING_ENABLED = obj.viewport.inputHandler.SNAPPING_ENABLED;
-	inputHandler.LOCK_SCALE_ENABLED = obj.viewport.inputHandler.LOCK_SCALE_ENABLED;
-	UIManager.toolbar.updateModeButtons();
+	if(obj.viewport.inputHandler.transformTool !== undefined) inputHandler.transformTool = parseInt(obj.viewport.inputHandler.transformTool);
+	if(obj.viewport.inputHandler.pivotMode !== undefined) inputHandler.pivotMode = parseInt(obj.viewport.inputHandler.pivotMode);
+	if(obj.viewport.inputHandler.SNAPPING_ENABLED !== undefined) inputHandler.SNAPPING_ENABLED = obj.viewport.inputHandler.SNAPPING_ENABLED === 'true' || obj.viewport.inputHandler.SNAPPING_ENABLED === true;
+	if(obj.viewport.inputHandler.LOCK_SCALE_ENABLED !== undefined) inputHandler.LOCK_SCALE_ENABLED = obj.viewport.inputHandler.LOCK_SCALE_ENABLED === 'true' || obj.viewport.inputHandler.LOCK_SCALE_ENABLED === true;
+	
+	if(UIManager && UIManager.toolbar) UIManager.toolbar.updateModeButtons();
 }
 
 App.prototype.runScript = function(filepath, type = ".js"){
@@ -876,8 +882,8 @@ App.prototype.loadSession = function(){
 
 App.prototype.setSettings = function(obj){
 	this.UIManager.propertiesMenu.isHidden = obj.UIManager.propertiesMenu.isHidden;
+	this.UIManager.workspaceMenu.isHidden = obj.UIManager.workspaceMenu.isHidden;
 	this.UIManager.statusBar.isHidden = obj.UIManager.statusBar.isHidden;
-	this.viewport.isHidden = obj.viewport.isHidden;
 	this.viewport.renderer.bodyCenter = obj.viewport.renderer.bodyCenter;
 	this.viewport.renderer.backgroundColor = obj.viewport.renderer.backgroundColor;
 	this.viewport.renderer.gridColor = obj.viewport.renderer.gridColor;
@@ -898,12 +904,14 @@ App.prototype.getSettings = function(){
 			propertiesMenu : {
 				isHidden : this.UIManager.propertiesMenu.isHidden
 			},
+			workspaceMenu : {
+				isHidden : this.UIManager.workspaceMenu.isHidden
+			},
 			statusBar : {
 				isHidden : this.UIManager.statusBar.isHidden
 			}
 		},
 		viewport : {
-			isHidden : this.viewport.isHidden,
 			renderer : {
 				bodyCenter: this.viewport.renderer.bodyCenter,
 				backgroundColor: this.viewport.renderer.backgroundColor,
@@ -954,42 +962,32 @@ var Editor = new App();
 			Editor.setSettings(data);
 			Editor.UIManager.updateLayout();
 			if(fs.existsSync(data.recentFilePath)){
-				var lastModified = getTimeDiffAndPrettyText(data.lastModified).friendlyNiceText;
-				var response = Editor.UIManager.getConfirmation(`Do you want to load last modified scene?`, `Last modified ${lastModified}`);
-				if(response == 0){
-					var file = fs.readFileSync(data.recentFilePath, 'utf8');
-					var obj = parse(file, '.json')
-					Editor.setCurrentFile(data.recentFilePath);
-					Editor.sceneManager.newScene();
-					Editor.sceneManager.loadSceneData(obj);
-					Editor.load_config_file();
-					Editor.UIManager.propertiesMenu.updateSceneCollection();
-					Editor.UIManager.propertiesMenu.updateSelectionProperty();
-					Editor.UIManager.toolbar.update_favourite_button();
-				}
-				else{
-					Editor.sceneManager.newScene();
-					Editor.UIManager.toolbar.update_favourite_button();
-					console.log('opretion cancelled!');
-				}
+				var file = fs.readFileSync(data.recentFilePath, 'utf8');
+				var obj = parse(file, '.json')
+				Editor.setCurrentFile(data.recentFilePath);
+				Editor.sceneManager.newScene();
+				Editor.sceneManager.loadSceneData(obj);
+				Editor.UIManager.propertiesMenu.updateSceneCollection();
+				Editor.UIManager.propertiesMenu.updateSelectionProperty();
+				Editor.UIManager.toolbar.update_favourite_button();
 			}
-			else if(fs.existsSync('unsaved_scene.json')){
-				var response = Editor.UIManager.getConfirmation("Do you want to load last unsaved scene?", 'Opening Unsaved Scene');
-				if(response == 0){
-					var file = fs.readFileSync('unsaved_scene.json', 'utf8');
-					var obj = parse(file, '.json');
-					Editor.sceneManager.newScene();
-					Editor.sceneManager.loadSceneData(obj);
-					Editor.UIManager.propertiesMenu.updateSceneCollection();
-					Editor.UIManager.propertiesMenu.updateSelectionProperty();
-					Editor.UIManager.toolbar.update_favourite_button();
-				}
-				else{
-					Editor.sceneManager.newScene();
-					console.log('opretion cancelled!');
-				}
+			// else if(fs.existsSync('unsaved_scene.json')){
+				// var response = Editor.UIManager.getConfirmation("Do you want to load last unsaved scene?", 'Opening Unsaved Scene');
+				// if(response == 0){
+					// var file = fs.readFileSync('unsaved_scene.json', 'utf8');
+					// var obj = parse(file, '.json');
+					// Editor.sceneManager.newScene();
+					// Editor.sceneManager.loadSceneData(obj);
+					// Editor.UIManager.propertiesMenu.updateSceneCollection();
+					// Editor.UIManager.propertiesMenu.updateSelectionProperty();
+					// Editor.UIManager.toolbar.update_favourite_button();
+				// }
+				// else{
+					// Editor.sceneManager.newScene();
+					// console.log('opretion cancelled!');
+				// }
 
-			}
+			// }
 			else{
 				Editor.sceneManager.newScene();
 				console.log('file not found :(');

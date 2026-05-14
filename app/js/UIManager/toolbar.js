@@ -323,7 +323,6 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 					var jsondata = JSON.parse(file);
 					ref.sceneManager.newScene();
 					ref.sceneManager.loadSceneData(jsondata);
-					Editor.load_config_file();				    
 				}
 			}
 			else{

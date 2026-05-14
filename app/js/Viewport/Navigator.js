@@ -7,7 +7,7 @@ function Navigator(){
 	this.scaleLimits = [0.0005, 50];			// [min scale, max scale]
 	this.grid = [0, 0];							// [range, cell_size]
 	this.range = 1000;
-	this.cell_size = 5;
+	this.cell_size = 10;
 }
 
 Navigator.prototype.screenPointToWorld = function(x, y){

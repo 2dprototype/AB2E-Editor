@@ -27,6 +27,7 @@ function workspaceMenu(sceneManager, viewport, UIManager) {
     this.setWorkspaceRoot = function(dirPath) {
         this.workspaceRoot = dirPath;
         this.update();
+        if(window.Editor) Editor.load_config_file();
     };
 
     this.update = function() {

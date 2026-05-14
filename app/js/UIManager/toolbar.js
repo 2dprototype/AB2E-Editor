@@ -128,7 +128,7 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 	}
 	
 	// view > buttons
-	//display Selection Property
+	//display Viewport/Selection Property
 	this.viewButtons[0].onclick = function(){
 		viewport.isHidden = !viewport.isHidden;
 		ref.UIManager.updateLayout();
@@ -138,21 +138,26 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 		ref.UIManager.propertiesMenu.isHidden = !ref.UIManager.propertiesMenu.isHidden;
 		ref.UIManager.updateLayout();
 	}
-	//display StatusBar
+	//display workspaceMenu
 	this.viewButtons[2].onclick = function(){
+		ref.UIManager.workspaceMenu.isHidden = !ref.UIManager.workspaceMenu.isHidden;
+		ref.UIManager.updateLayout();
+	}
+	//display StatusBar
+	this.viewButtons[3].onclick = function(){
 		ref.UIManager.statusBar.isHidden = !ref.UIManager.statusBar.isHidden;
 		ref.UIManager.updateLayout();
 	}	
 	//zoom in
-	this.viewButtons[3].onclick = function(){
+	this.viewButtons[4].onclick = function(){
 		ref.viewport.zoomIn();
 	}
 	//zoom out
-	this.viewButtons[4].onclick = function(){
+	this.viewButtons[5].onclick = function(){
 		ref.viewport.zoomOut();
 	}
-	//zoom out
-	this.viewButtons[5].onclick = function(){
+	//reset view
+	this.viewButtons[6].onclick = function(){
 		ref.viewport.resetView();
 	}
 	
@@ -264,52 +269,56 @@ pre code.hljs{display:block;overflow-x:auto;padding:1em}code.hljs{padding:3px 5p
 	this.fileButtons[1].onclick = function(){
 	    ref.UIManager.loadScene();
 	}
-	//save
+	//open folder
 	this.fileButtons[2].onclick = function(){
+		ref.UIManager.openFolder();
+	}
+	//save
+	this.fileButtons[3].onclick = function(){
 		ref.UIManager.saveScene();
 	}
 	//save as
-	this.fileButtons[3].onclick = function(){
+	this.fileButtons[4].onclick = function(){
 		var data = ref.sceneManager.getSceneData();
 		ref.UIManager.saveSceneAs(data);
 	}
 	//import
-	this.fileButtons[4].onclick = function(){
+	this.fileButtons[5].onclick = function(){
 		ref.UIManager.importScene();
 	}
 	//exprot
-	this.fileButtons[5].onclick = function(){
+	this.fileButtons[6].onclick = function(){
 		ref.UIManager.exportScene();
 	}
 	//exprot as json 
-	this.fileButtons[6].onclick = function(){
+	this.fileButtons[7].onclick = function(){
 		var data = JSON.stringify(ref.sceneManager.exportWorld(false), null, 4);
 		ref.UIManager.exportSceneAs(data, 'json');
 	}
 	//exprot as xml
-	this.fileButtons[7].onclick = function(){
+	this.fileButtons[8].onclick = function(){
 		var data = toXML(ref.sceneManager.exportWorld(false), null, 4);
 		ref.UIManager.exportSceneAs(data, 'xml');
 	}
 	//exprot as json & trim image
-	this.fileButtons[8].onclick = function(){
+	this.fileButtons[9].onclick = function(){
 		var data = JSON.stringify(ref.sceneManager.exportWorld(true), null, 4);
 		ref.UIManager.exportSceneAs(data, 'json');
 	}
 	//exprot as ._ab2e
-	this.fileButtons[9].onclick = function(){
+	this.fileButtons[10].onclick = function(){
 		ref.UIManager.exportSceneWindow('_ab2e', function(filepath){
 		    ref.UIManager.fileExporter.exportAs_ab2e(filepath);
 		})
 	}
 	//exprot as .zip
-	this.fileButtons[10].onclick = function(){
+	this.fileButtons[11].onclick = function(){
 		ref.UIManager.exportSceneWindow('zip', function(filepath){
 		    ref.UIManager.fileExporter.saveAsZip(filepath);
 		})
 	}
 	//reload scene
-	this.fileButtons[11].onclick = function(){
+	this.fileButtons[12].onclick = function(){
 		var response = ref.UIManager.getConfirmation("Do you wants to reload scene?", 'Loading Scene');
 		if(response == 0){
 			if(Editor.currentFile.path != ''){

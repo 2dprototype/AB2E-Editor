@@ -411,6 +411,7 @@ App.prototype.init = function(){
 		ref.viewport.getRenderer().setStageWidthHeight(ref.canvas.width, ref.canvas.height);
 		ref.viewport.resetView();
 		ref.UIManager.toolbar.updateCustomScripts();
+		if(ref.UIManager.workspaceMenu) ref.UIManager.workspaceMenu.update();
 	});
 	window.onbeforeunload = function(){
 		ref.saveSession();
@@ -507,6 +508,9 @@ App.prototype.setCurrentFile = function(filepath){
 	
 	this.updateTitle();
 	this.updateTabs();
+	if(this.UIManager && this.UIManager.workspaceMenu) {
+		this.UIManager.workspaceMenu.update();
+	}
 };
 
 App.prototype.resetCurrentFile = function(){
@@ -523,6 +527,9 @@ App.prototype.resetCurrentFile = function(){
 	
 	this.updateTitle();
 	this.updateTabs();
+	if(this.UIManager && this.UIManager.workspaceMenu) {
+		this.UIManager.workspaceMenu.update();
+	}
 };
 
 App.prototype.setExportedFile = function(filepath, ext = ''){

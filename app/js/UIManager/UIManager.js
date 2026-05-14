@@ -1,5 +1,6 @@
 function UIManager(sceneManager, viewport, canvas, fileExporter){
 	this.propertiesMenu = new propertiesMenu(sceneManager, viewport, this);
+	this.workspaceMenu = new workspaceMenu(sceneManager, viewport, this);
 	this.statusBar = new statusBar(sceneManager, viewport);
 	this.toolbar = new toolbar(sceneManager, viewport, this, canvas);
 	this.sceneInfo = new SceneInfo(sceneManager);
@@ -23,6 +24,7 @@ function UIManager(sceneManager, viewport, canvas, fileExporter){
 	this.SHIFT_PRESSED = 0;
 	this.ALT_PRESSED = 0;
 	this.SPACE_PRESSED = 0;
+	this.currentEditingTextFile = null;
 }
 
 
@@ -36,6 +38,14 @@ UIManager.prototype.hideCodeEditor = function(){
 	this.codeEditorBG.style.display = "none"
 	this.propertiesMenu.gameviewProperties[6].setAttribute("isDone", "false")
 	this.propertiesMenu.gameviewProperties[6].value = "Edit"
+	this.currentEditingTextFile = null;
+}
+
+UIManager.prototype.saveTextFile = function(){
+	if(this.currentEditingTextFile){
+		var data = this.codeEditor.getValue();
+		fs.writeFileSync(this.currentEditingTextFile, data, 'utf8');
+	}
 }
 
 
@@ -219,7 +229,13 @@ UIManager.prototype.onKeyDown = function(e){
 	if(ref.CTRL_PRESSED && e.which == 78) ref.newScene();
 	else if(ref.CTRL_PRESSED && e.which == 79) ref.loadScene();
 	else if(ref.CTRL_PRESSED && ref.SHIFT_PRESSED && e.which == 83) console.log(null);
-	else if(ref.CTRL_PRESSED && e.which == 83) ref.saveScene();
+	else if(ref.CTRL_PRESSED && e.which == 83) {
+		if(this.codeEditorBG.style.display == "block" && this.currentEditingTextFile) {
+			this.saveTextFile();
+		} else {
+			ref.saveScene();
+		}
+	}
 	else if(ref.CTRL_PRESSED && e.which == 88) ref.exportScene();
 	
 	if(ref.SHIFT_PRESSED && ref.ALT_PRESSED && keycode == 86){ //v
@@ -259,83 +275,82 @@ UIManager.prototype.updateLayout = function(){
 	var toolbar = this.toolbar.element;
 	var statusBar = this.statusBar.element;
 	var propertiesMenu = this.propertiesMenu.element;
+	var workspaceMenu = this.workspaceMenu.element;
 	var canvas = this.canvas;
 	var viewport = this.viewport;
 	var tabBar = document.getElementById('tab-container');
 	var tabBarHeight = tabBar ? tabBar.offsetHeight : 0;
 	
-	if(this.statusBar.isHidden){
-		this.statusBar.hide();
+	var winW = window.innerWidth;
+	var winH = window.innerHeight;
+	
+	var topOffset = toolbar.offsetHeight + tabBarHeight;
+	var leftOffset = this.workspaceMenu.isHidden ? 0 : 250;
+	var rightOffset = this.propertiesMenu.isHidden ? 0 : propertiesMenu.offsetWidth;
+	var bottomOffset = this.statusBar.isHidden ? 0 : statusBar.offsetHeight;
+	
+	// Workspace Menu
+	if(this.workspaceMenu.isHidden){
+		this.workspaceMenu.hide();
 		this.toolbar.viewButtons[2].style.color = '#000';
-		canvas.height = window.innerHeight - (toolbar.offsetHeight + statusBar.offsetHeight + tabBarHeight);
-		viewport.resetPanning();
-		viewport.getRenderer().setStageWidthHeight(canvas.width, canvas.height);
-	}
-	else{
-		this.statusBar.show();
+	} else {
+		this.workspaceMenu.show();
 		this.toolbar.viewButtons[2].style.color = '#00f';
-		canvas.height = window.innerHeight - (toolbar.offsetHeight + statusBar.offsetHeight + tabBarHeight);
-		viewport.resetPanning();
-		viewport.getRenderer().setStageWidthHeight(canvas.width, canvas.height);
+		workspaceMenu.style.width = leftOffset + 'px';
+		workspaceMenu.style.height = (winH - topOffset) + 'px';
+		workspaceMenu.style.top = topOffset + 'px';
+		workspaceMenu.style.left = '0px';
 	}
 	
+	// Properties Menu
 	if(this.propertiesMenu.isHidden){
 		this.propertiesMenu.hide();
 		this.toolbar.viewButtons[1].style.color = '#000';
-		canvas.width = window.innerWidth;
-		viewport.resetPanning();
-		viewport.getRenderer().setStageWidthHeight(canvas.width, canvas.height);
-	}
-	else{
+	} else {
 		this.propertiesMenu.show();
 		this.toolbar.viewButtons[1].style.color = '#00f';
-		canvas.width = window.innerWidth - propertiesMenu.offsetWidth;
-		viewport.resetPanning();
-		viewport.getRenderer().setStageWidthHeight(canvas.width, canvas.height);
+		propertiesMenu.style.top = topOffset + 'px';
+		propertiesMenu.style.height = (winH - topOffset) + 'px';
 	}
+	
+	// Status Bar
+	if(this.statusBar.isHidden){
+		this.statusBar.hide();
+		this.toolbar.viewButtons[3].style.color = '#000';
+	} else {
+		this.statusBar.show();
+		this.toolbar.viewButtons[3].style.color = '#00f';
+		statusBar.style.left = leftOffset + 'px';
+		statusBar.style.width = (winW - leftOffset - rightOffset) + 'px';
+	}
+	
+	// Canvas / Viewport
+	canvas.style.position = 'absolute';
+	canvas.style.left = leftOffset + 'px';
+	canvas.style.top = topOffset + 'px';
+	canvas.width = winW - leftOffset - rightOffset;
+	canvas.height = winH - topOffset - bottomOffset;
+	
+	viewport.getRenderer().setStageWidthHeight(canvas.width, canvas.height);
+	viewport.resetPanning();
 	
 	if(viewport.isHidden){
 		viewport.hide();
 		this.toolbar.viewButtons[0].style.color = '#000';
-	    propertiesMenu.style.width = window.innerWidth;
-	    // propertiesMenu.style.height = window.innerHeight - (toolbar.offsetHeight + statusBar.offsetHeight);
-	    statusBar.style.width = window.innerWidth;
-		this.hideCodeEditor()
-	}
-	else{
+		this.hideCodeEditor();
+	} else {
 		viewport.show();
 		this.toolbar.viewButtons[0].style.color = '#00f';
-	    propertiesMenu.style.width = '32%';
-	    // propertiesMenu.style.height = window.innerHeight - toolbar.offsetHeight;
-		canvas.width = window.innerWidth - propertiesMenu.offsetWidth;
-		viewport.resetPanning();
-		viewport.getRenderer().setStageWidthHeight(canvas.width, canvas.height);
-		statusBar.style.width = window.innerWidth - propertiesMenu.offsetWidth;
-		// this.showCodeEditor()
 	}
 	
-	this.codeEditorBG.style.height = canvas.height
-	this.codeEditorBG.style.width = canvas.width
-	this.codeEditorBG.style.top = canvas.offsetTop
-	
+	this.codeEditorBG.style.height = canvas.height + 'px';
+	this.codeEditorBG.style.width = canvas.width + 'px';
+	this.codeEditorBG.style.top = canvas.offsetTop + 'px';
+	this.codeEditorBG.style.left = canvas.offsetLeft + 'px';
 }
 
 UIManager.prototype.resizeLayout = function(){
-	var toolbar = this.toolbar.element;
-	var statusBar = this.statusBar.element;
-	var propertiesMenu = this.propertiesMenu.element;
-	var canvas = this.canvas;
-	var tabBar = document.getElementById('tab-container');
-	var tabBarHeight = tabBar ? tabBar.offsetHeight : 0;
-	
-	propertiesMenu.style.height = window.innerHeight - (toolbar.offsetHeight + tabBarHeight);
-	propertiesMenu.style.top = toolbar.offsetHeight + tabBarHeight;
-	this.propertiesMenu.resizeLayout();
-	
-	canvas.width = window.innerWidth - propertiesMenu.offsetWidth;
-	canvas.height = window.innerHeight - (toolbar.offsetHeight + statusBar.offsetHeight);
-	
-	statusBar.style.width = window.innerWidth - propertiesMenu.offsetWidth;
+	this.updateLayout();
 }
 
 
@@ -748,6 +763,17 @@ UIManager.prototype.checkFileSaved = function(){
 
 UIManager.prototype.openFile = function(options = {}){
 	return ipcRenderer.sendSync('openFile-message', options);
+}
+
+UIManager.prototype.openFolder = function(){
+	var options = {
+		properties: ['openDirectory']
+	};
+	var result = ipcRenderer.sendSync('openFile-message', options);
+	if(!result.canceled && result.filePaths.length > 0){
+		this.workspaceMenu.setWorkspaceRoot(result.filePaths[0]);
+		this.workspaceMenu.show();
+	}
 }
 
 UIManager.prototype.getFilePath = function(options = {}){

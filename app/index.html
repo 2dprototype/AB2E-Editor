@@ -8,6 +8,8 @@
 		<link rel="stylesheet" href="lib/highlight/styles/atom-one-dark.css">
 		<link rel="stylesheet" href="css/style.css">
 		<link rel="stylesheet" href="css/reset.css">
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+		<script type="text/javascript" src="lib/svg-inject.min.js"></script>
 	</head>
 	<body style="display:none;">
 		<div id="toolbar">
@@ -17,6 +19,7 @@
 					<div id="fileButtons" class="content dropdown-a-content">
 						<a class="option" href="#">New Scene</a>
 						<a class="option" href="#">Load Scene</a>
+						<a class="option" href="#">Open Folder</a>
 						<a class="option" href="#">Save</a>
 						<a class="option" href="#">Save As</a>
 						<a class="option" href="#">Import</a>
@@ -43,6 +46,7 @@
 							<div class="content dropdown-b-content dropdown-right-content">
 								<a class="option" href="#">Viewport</a>
 								<a class="option" href="#">Properties Menu</a>
+								<a class="option" href="#">Workspace Menu</a>
 								<a class="option" href="#">Status Bar</a>
 							</div>
 						</div>
@@ -195,6 +199,10 @@
 		</div>
 		<div id="tab-container" class="tab-bar"></div>
 		<div id="statusBar"></div>
+		<div id="workspace-menu">
+			<div class="head">Workspace</div>
+			<div id="workspace-tree" class="tree"></div>
+		</div>
 		<canvas id="main-canvas"></canvas>
 		<div id="section_property">
 			<div class="head">
@@ -1340,6 +1348,7 @@
 		
 		<script src="js/UIManager/SceneInfo.js"></script>
 		<script src="js/UIManager/propertiesMenu.js"></script>
+		<script src="js/UIManager/workspaceMenu.js"></script>
 		<script src="js/UIManager/UIManager.js"></script>
 		
 		<script src="js/GameView.js"></script>

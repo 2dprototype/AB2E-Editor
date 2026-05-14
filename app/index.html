@@ -1,0 +1,1356 @@
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>AB2E Editor</title>
+		<link rel="stylesheet" href="lib/codemirror/codemirror.css">
+		<link rel="stylesheet" href="lib/codemirror/one-dark.css">
+		<link rel="stylesheet" href="lib/codemirror/show-hint.css">
+		<link rel="stylesheet" href="lib/highlight/styles/atom-one-dark.css">
+		<link rel="stylesheet" href="css/style.css">
+		<link rel="stylesheet" href="css/reset.css">
+	</head>
+	<body style="display:none;">
+		<div id="statusBar"></div>
+		<div id="toolbar">
+			<div class="common-tool" id="system-tools">
+				<div class="dropdown dropdown-a">
+					<button class="btn">File</button>
+					<div id="fileButtons" class="content dropdown-a-content">
+						<a class="option" href="#">New Scene</a>
+						<a class="option" href="#">Load Scene</a>
+						<a class="option" href="#">Save</a>
+						<a class="option" href="#">Save As</a>
+						<a class="option" href="#">Import</a>
+						<a class="option" href="#">Export</a>
+						<div class="dropdow dropdown-b">
+							<div class="option">Export As</div>
+							<div class="content dropdown-b-content dropdown-right-content">
+								<a class="option" href="#">JSON</a>
+								<a class="option" href="#">XML</a>
+								<a class="option" href="#">JSON (Trim Image)</a>
+								<a class="option" href="#">Archive (._ab2e)</a>
+								<a class="option" href="#">Source (.zip)</a>
+							</div>
+						</div>
+						<a class="option" href="#">Reload Scene</a>
+					</div>
+				</div>
+				
+				<div class="dropdown dropdown-a">
+					<button class="btn">View</button>
+					<div id="viewButtons" class="content dropdown-a-content">
+						<div class="dropdown dropdown-b">
+							<div class="option">Layout</div>
+							<div class="content dropdown-b-content dropdown-right-content">
+								<a class="option" href="#">Viewport</a>
+								<a class="option" href="#">Properties Menu</a>
+								<a class="option" href="#">Status Bar</a>
+							</div>
+						</div>
+						<a class="option" href="#">Zoom In<span class="sub">+ / PG-UP</span></a>
+						<a class="option" href="#">Zoom Out<span class="sub">- / PG-DN</span></a>
+						<a class="option" href="#">Reset View</a>
+					</div>
+				</div>
+				<div class="dropdown dropdown-a">
+					<button class="btn">Edit</button>
+					<div  id="edit-buttons" class="content dropdown-a-content">
+						<div class="dropdown">
+							<div class="button dropdown-b">
+								<div class="option">Run Script</div>
+								<div id="run-script" class="content dropdown-b-content dropdown-right-content"></div>
+							</div>
+						</div>
+						<a class="button option" href="#">Clone<span class="sub">SHIFT + D</span></a>
+						<a class="button option" href="#">Remove<span class="sub">DEL</span></a>
+					</div>
+				</div>
+				<div class="dropdown dropdown-a">
+					<button class="btn">Add</button>
+					<div class="content dropdown-a-content">
+						<div class="dropdown dropdown-b">
+							<div class="option">Body</div>
+							<div id="add_body" class="content dropdown-b-content dropdown-right-content">
+								<a class="option" value="0" href="#">Box</a>
+								<a class="option" value="1" href="#">Circle</a>
+								<a class="option" value="2" href="#">Polygon</a>
+								<a class="option" value="3" href="#">Chain</a>
+								<a class="option" value="5" href="#">Edge</a>
+							</div>
+						</div>
+						<div class="dropdown dropdown-b">
+							<div class="option">Shape</div>
+							<div id="add_shape" class="content dropdown-b-content dropdown-right-content">
+								<a class="option" value="0" href="#">Box</a>
+								<a class="option" value="1" href="#">Circle</a>
+								<a class="option" value="2" href="#">Polygon</a>
+								<a class="option" value="3" href="#">Chain</a>
+								<a class="option" value="5" href="#">Edge</a>
+								<!-- <a value="0" href="#">From Image</a> -->
+							</div>
+						</div>
+						<div class="dropdown dropdown-b">
+							<div class="option">Joint</div>
+							<div id="add_joint" class="content dropdown-b-content dropdown-right-content">
+								<a class="option" value="2" href="#">Revolute</a>
+								<a class="option" value="6" href="#">Prismatic</a>
+								<a class="option" value="0" href="#">Distance</a>
+								<a class="option" value="4" href="#">Pulley</a>
+								<a class="option" value="10" href="#">Mouse</a>
+								<a class="option" value="5" href="#">Gear</a>
+								<a class="option" value="3" href="#">Wheel</a>
+								<a class="option" value="1" href="#">Weld</a>
+								<a class="option" value="9" href="#">Friction</a>
+								<a class="option" value="7" href="#">Rope</a>
+								<a class="option" value="11" href="#">Motor</a>
+								<a class="option" value="8" href="#">Area</a>
+							</div>
+						</div>
+						<div class="dropdown dropdown-b">
+							<div class="option">Particle</div>
+							<div id="add_particle" class="content dropdown-b-content dropdown-right-content">
+								<a class="option" value="1" href="#">Box</a>
+								<a class="option" value="0" href="#">Circle</a>
+								<a class="option" value="2" href="#">Polygon</a>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="dropdown dropdown-a">
+					<button class="btn">Mode</button>
+					<div  id="mode-buttons" class="content dropdown-a-content">
+						<div class="group">
+							<a class="option" data="3" href="#">Object Center</a>
+							<a class="option" data="4" href="#">Selection Center</a>
+						</div>
+						<div class="group">
+							<a class="option" data="5" href="#">Scale<span class="sub">R</span></a>
+							<a class="option" data="6" href="#">Rotate<span class="sub">E</span></a>
+							<a class="option" data="7" href="#">Translate<span class="sub">W</span></a>
+						</div>
+						<div class="group">
+							<a class="option" href="#">Lock Scale</a>
+							<a class="option" href="#">Snapping</a>
+						</div>
+						<div class="group">
+							<a class="option" href="#">Maks Joint<span class="sub">J</span></a>
+							<a class="option" href="#">Mask Body<span class="sub">B</span></a>
+							<a class="option" href="#">Mask Particle<span class="sub">P</span></a>
+						</div>
+					</div>
+				</div>
+			</div>	
+			<div class="common-tool" id="transform-tools">
+				<button class="btn" data="7">
+					<img class="svg-icon" src="ui/icons/arrows-move.svg" onload="SVGInject(this)"/>
+				</button>
+				<button class="btn" data="6">
+					<img height="16" width="16" class="svg-icon" src="ui/icons/arrow-clockwise.svg" onload="SVGInject(this)"/>
+				</button>
+				<button class="btn" data="5">
+					<img height="16" width="16" class="svg-icon" src="ui/icons/bounding-box-circles.svg" onload="SVGInject(this)"/>
+				</button>
+				<button class="btn" data="-1">
+					<img height="16" width="16" class="svg-icon" src="ui/icons/lock-fill.svg" onload="SVGInject(this)"/>
+				</button>
+			</div>
+			<div class="common-tool" id="gameplay-tools">
+				<button class="btn">
+					<img class="svg-icon" src="ui/icons/play.svg" onload="SVGInject(this)"/>
+				</button>
+				<button class="btn">
+					<img class="svg-icon" src="ui/icons/pause.svg" onload="SVGInject(this)"/>
+				</button>
+				<button class="btn">
+					<img class="svg-icon" src="ui/icons/next-step.svg" onload="SVGInject(this)"/>
+				</button>
+				<button class="btn">
+					<img height="16" width="16" class="svg-icon" src="ui/icons/outline/play_circle.svg"  onload="SVGInject(this)"/>
+				</button>
+				<button class="btn">
+					<img class="svg-icon" src="ui/icons/terminal.svg" onload="SVGInject(this)"/>
+				</button>
+			</div>
+			<div class="common-tool" id="file-tools">
+				<button class="btn">
+					<img class="svg-icon" src="ui/icons/sd-card-fill.svg" onload="SVGInject(this)"/>
+				</button>
+				<button class="btn">
+					<img class="svg-icon" src="ui/icons/filetype-json.svg" onload="SVGInject(this)"/>
+				</button>
+				<button class="btn">
+					<img class="svg-icon" src="ui/icons/filetype-xml.svg" onload="SVGInject(this)"/>
+				</button>
+				<button class="btn">
+					<img class="svg-icon" src="ui/icons/braces.svg" onload="SVGInject(this)"/>
+				</button>
+			</div>
+			<div class="common-tool" id="project-tools">
+				<button class="btn">
+					<img height="16" width="16" class="svg-icon" src="ui/icons/fill/favorite.svg" onload="SVGInject(this)"/>
+				</button>
+				<button class="btn">
+					<img height="16" width="16" class="svg-icon" src="ui/icons/info-circle-fill.svg" onload="SVGInject(this)"/>
+				</button>
+			</div>
+		</div>
+		<canvas id="main-canvas"></canvas>
+		<div id="section_property">
+			<div class="head">
+				<div id="section-property-head" class="collapse-group">
+					<div class="key">Selection</div>
+					<div class="key">Collision Filters</div>
+					<div class="key">Game View</div>
+					<div class="key">Scene Collection</div>
+					<div class="key">Settings</div>
+				</div>	
+			</div>
+			
+			<div class="body">
+				<div id="collision-filter">
+				</div>
+				<div id="objects-list">
+					<div class="body"></div>
+				</div>
+				<div id="settings-property">
+					<table id="settings-properties">
+						<tr>
+							<td>
+								<p>Viewport</p>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Render Grid</p>
+							</td>
+							<td>
+								<input type="checkbox">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Grid Color</p>
+							</td>
+							<td>
+								<input type="color">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Background Color</p>
+							</td>
+							<td>
+								<input type="color">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Cell Size</p>
+							</td>
+							<td>
+								<input type="number">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Grid Range</p>
+							</td>
+							<td>
+								<input type="number">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Body Center</p>
+							</td>
+							<td>
+								<input type="checkbox">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>DEBUG</p>
+							</td>
+							<td>
+								<input type="checkbox">
+							</td>
+						</tr>
+					</table>
+				</div> 
+				<div id="world-property">
+					<table id="world-properties">
+						<tr>
+							<td>
+								<p>Total Bodies</p>
+							</td>
+							<td>
+								<p><span></span></p>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Total Joints</p>
+							</td>
+							<td>
+								<p><span></span></p>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Total Particles</p>
+							</td>
+							<td>
+								<p><span></span></p>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Gravity</p>
+							</td>
+							<td>
+								<p><input type="text" size="4"><input type="text" size="4"></p>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Allow Sleep</p>
+							</td>
+							<td>
+								<input type="checkbox">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Debug Draw</p>
+							</td>
+							<td>
+								<input type="checkbox">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Draw Scale</p>
+							</td>
+							<td>
+								<input type="text" >
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Draw Sprites</p>
+							</td>
+							<td>
+								<input type="checkbox">
+							</td>
+						</tr>	
+						<tr>
+							<td>
+								<p>Runtime Script</p>
+							</td>
+							<td>
+								<input type="button" isDone="false" value="Edit">
+							</td>
+						</tr>
+					</table>
+				</div> 
+				<div id="object-property">
+					<div id="object-property-head" class="collapse-group">
+						<div class="key">Sprite</div>
+						<div class="key">Body</div>
+						<div class="key">Joint</div>
+						<div class="key">Particle</div>
+					</div>
+					<div id="sprite-properties-head">
+						<div id="sprite-properties">
+							<table>
+								<tr>
+									<td>
+										<p>Files</p>
+									</td>
+									<td>
+										<div>
+											<select></select>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Add Image</p>
+									</td>
+									<td>
+										<p><input type="button" value="Choose"></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Source</p>
+									</td>
+									<td>
+										<div>
+											<span></span>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Width</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Height</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>X</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Y</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Rotation</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Opacity</p>
+									</td>
+									<td>
+										<p><input value="100" type="range" min="0" max="100"></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Flip</p>
+									</td>
+									<td>
+										<p>
+											<input type="checkbox">
+											<input type="checkbox">
+										</p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Z-Index</p>
+									</td>
+									<td>
+										<p><input value="0" type="number"></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Vertex</p>
+									</td>
+									<td>
+										<p><input type="button" value="Edit"></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Edit Image</p>
+									</td>
+									<td>
+										<p><input type="button" value="Edit"></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Clear Image</p>
+									</td>
+									<td>
+										<p><input type="button" value="Clear"></p>
+									</td>
+								</tr>	
+							</table>
+						</div>
+					</div>
+					<div id="body-properties-head">
+						<div  id="body-properties">
+							<table>
+								<tr>
+									<td>
+										<p>Fixture</p>
+									</td>
+									<td>
+										<p><input type="button" value="Edit"></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Name</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>User Data</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Body Type</p>
+									</td>
+									<td>
+										<p>
+											<select>
+												<option value="0">Static</option>
+												<option value="1">Kinematic</option>
+												<option value="2">Dynamic</option>
+											</select>
+										</p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Position</p>
+									</td>
+									<td>
+										<p><input type="text" size="4"><input type="text" size="4"></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Rotation</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>ScaleXY</p>
+									</td>
+									<td>
+										<p><input type="text" size="4"><input type="text" size="4"></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Linear Velocity</p>
+									</td>
+									<td>
+										<p><input type="text" size="4"><input type="text" size="4"></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Angular Velocity</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Linear Damping</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Angular Damping</p>
+									</td>
+									<td>
+										<input type="text">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>isBullet</p>
+									</td>
+									<td>
+										<input type="checkbox">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Fixed Rotation</p>
+									</td>
+									<td>
+										<input type="checkbox">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>isActive</p>
+									</td>
+									<td>
+										<input type="checkbox">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>isAwake</p>
+									</td>
+									<td>
+										<input type="checkbox">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Gravity Scale</p>
+									</td>
+									<td>
+										<input type="text">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Info</p>
+									</td>
+									<td>
+										<p><input type="button" value="Get Info"></p>
+									</td>
+								</tr>
+							</table>
+						</div>
+						<div  id="fixture-properties">
+							<table>
+								<tr>
+									<td>
+										<p>Fixture</p>
+									</td>
+									<td>
+										<p><input type="button" value="Done"></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Shape Type</p>
+									</td>
+									<td>
+										<p><span></span></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Vertex</p>
+									</td>
+									<td>
+										<p><input type="button" value="Edit"></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>User Data</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Position</p>
+									</td>
+									<td>
+										<p><input type="text" size="4"><input type="text" size="4"></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Rotation</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>ScaleXY</p>
+									</td>
+									<td>
+										<p><input type="text" size="4"><input type="text" size="4"></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Density</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Friction</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Restitution</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Mask Bits</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Category Bits</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Group Index</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>isSensor</p>
+									</td>
+									<td>
+										<input type="checkbox" >
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+					<div id="joint-properties-head">
+						<div id="joint-properties">
+							<table>
+								<tr>
+									<td>
+										<p>Edit Joint</p>
+									</td>
+									<td>
+										<p><input type="button" value="Edit"></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Name</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>User Data</p>
+									</td>
+									<td>
+										<input type="text" >
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Joint Type</p>
+									</td>
+									<td>
+										<p><span></span></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>BodyA</p>
+									</td>
+									<td>
+										<p><select></select></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>BodyB</p>
+									</td>
+									<td>
+										<p><select></select></p>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<p>Collide Connected</p>
+									</td>
+									<td>
+										<input type="checkbox">
+									</td>
+									<tr>
+										<td>
+											<p>Frequency Hz</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Damping Ratio</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>	
+									<tr>
+										<td>
+											<p>LocalAnchor A</p>
+										</td>
+										<td>
+											<p><input type="text" size="4"><input type="text" size="4"></p>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>LocalAnchor B</p>
+										</td>
+										<td>
+											<p><input type="text" size="4"><input type="text" size="4"></p>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Reference Angle</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Lower Angle</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Upper Angle</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Enable Limit</p>
+										</td>
+										<td>
+											<input type="checkbox">
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Enable Motor</p>
+										</td>
+										<td>
+											<input type="checkbox">
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Motor Speed</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Max Motor Torque</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>	
+									<tr>
+										<td>
+											<p>Lower Translation</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Upper Translation</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Ratio</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>groundAnchor A</p>
+										</td>
+										<td>
+											<p><input type="text" size="4"><input type="text" size="4"></p>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>groundAnchor B</p>
+										</td>
+										<td>
+											<p><input type="text" size="4"><input type="text" size="4"></p>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Max length</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Max Force</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Max Torque</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>angularOffset</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>linearOffset</p>
+										</td>
+										<td>
+											<p><input type="text" size="4"><input type="text" size="4"></p>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>correctionFactor</p>
+										</td>
+										<td>
+											<input type="text" >
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						<div id="particle-properties-head">
+							<div id="particle-properties">
+								<table>
+									<tr>
+										<td>
+											<p>Name</p>
+										</td>
+										<td>
+											<input type="text"/>
+										</td>
+									</tr>	
+									<tr>
+										<td>
+											<p>User Data</p>
+										</td>
+										<td>
+											<input type="text"/>
+										</td>
+									</tr>	
+									<tr>
+										<td>
+											<p>Position</p>
+										</td>
+										<td>
+											<p><input type="text" size="5">
+											<input type="text" size="5"></p>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Rotation</p>
+										</td>
+										<td>
+											<input type="text"/>
+										</td>
+									</tr>	
+									<tr>
+										<td>
+											<p>Shape Type</p>
+										</td>	
+										<td>
+											<span>none</span>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Vertex</p>
+										</td>	
+										<td>
+											<input value="Edit" type="button"></input>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Radius</p>
+										</td>
+										<td>
+											<input type="text"/>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Width</p>
+										</td>
+										<td>
+											<input type="text"/>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Height</p>
+										</td>
+										<td>
+											<input type="text"/>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Color</p>
+										</td>
+										<td>
+											<p><input type="text" maxlength="3" size="2">
+												<input type="text" maxlength="3" size="2">
+											<input type="text" maxlength="3" size="2"></p>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Color Alpha</p>
+										</td>
+										<td>
+											<input type="text" maxlength="3"/>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Strength</p>
+										</td>
+										<td>
+											<input type="text"/>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Life Time</p>
+										</td>
+										<td>
+											<input type="text"/>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Stride</p>
+										</td>
+										<td>
+											<input type="text"/>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Particle Radius</p>
+										</td>
+										<td>
+											<input type="text"/>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Angular Velocity</p>
+										</td>
+										<td>
+											<input type="text"/>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Linear Velocity</p>
+										</td>
+										<td>
+											<p><input type="text" size="5">
+											<input type="text" size="5"></p>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<p>Flags</p>
+										</td>
+										<td>
+											<span>Flags : none</span>
+											<div id="particle-flags-list">
+												<p><input type="checkbox" value="1024"><label for="">b2_barrierParticle</label></p>
+												<p><input type="checkbox" value="256"><label for="">b2_colorMixingParticle</label></p>
+												<!-- <p>b2_destructionListenerParticle<input type="checkbox" value="512"></p> -->
+												<p><input type="checkbox" value="16"><label for="">b2_elasticParticle</label></p>
+												<!-- <p>b2_fixtureContactFilterParticle<input type="checkbox" value="65536"></p> -->
+												<!-- <p>b2_fixtureContactListenerParticle<input type="checkbox" value="16384"></p> -->
+												
+												<!-- <p>b2_particleContactFilterParticle<input type="checkbox" value="131072"></p> -->
+												<!-- <p>b2_particleContactListenerParticle<input type="checkbox" value="32768"></p> -->
+												<p><input type="checkbox" value="64"><label for="">b2_powderParticle</label></p>
+												<p><input type="checkbox" value="4096"><label for="">b2_reactiveParticle</label></p>
+												<p><input type="checkbox" value="8192"><label for="">b2_repulsiveParticle</label></p>
+												<p><input type="checkbox" value="8"><label for="">b2_springParticle</label></p>
+												<p><input type="checkbox" value="128"><label for="">b2_tensileParticle</label></p>
+												<p><input type="checkbox" value="32"><label for="">b2_viscousParticle</label></p>
+												<p><input type="checkbox" value="4"><label for="">b2_wallParticle</label></p>
+												<p><input type="checkbox" value="0"><label for="">b2_waterParticle</label></p>
+												<p><input type="checkbox" value="2"><label for="">b2_zombieParticle</label></p>
+												
+												<input value="Apply" type="button"></input>
+											</div>
+											
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div id="code-editor-bg" style="display:none;">
+				<textarea spellcheck="false" id="code-editor"></textarea>
+			</div>
+			
+			<div id="scene-info" style="display:none;">
+				<div class="header">
+					<span>Scene Info</span>
+				</div>
+				<div class="body">
+					<table>
+						<tr>
+							<td>
+								<p>Name</p>
+							</td>
+							<td>
+								<input class="push_able" type="text" size="33" spellcheck="false"/>
+							</td>
+							</tr>
+							<tr>
+								<td>
+								<p>Author</p>
+							</td>
+							<td>
+								<input class="push_able" type="text" size="33" spellcheck="false"/>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Comment</p>
+							</td>
+							<td>
+								<textarea class="push_able" spellcheck="false"></textarea>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Created</p>
+							</td>
+							<td>
+								<span class="push_able"></span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Last Modified</p>
+							</td>
+							<td>
+								<span class="push_able"></span>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<p>Location</p>
+							</td>
+							<td>
+								<span class="push_able"></span>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="footer">
+					<input class="push_button" type="button" value="Close"/>
+					<input class="push_button" type="button" value="Done"/>
+				</div>
+			</div>
+		</body>
+		
+		<!-- box2d -->
+		<!-- <script src="Box2d/inherit.js"></script> -->
+		<!-- <script src="Box2d/Common/b2Settings.js"></script> -->
+		<!-- <script src="Box2d/Common/b2Math.js"></script> -->
+		<!-- <script src="Box2d/Common/b2BlockAllocator.js"></script> -->
+		<!-- <script src="Box2d/Common/b2StackAllocator.js"></script> -->
+		<!-- <script src="Box2d/Common/b2Draw.js"></script> -->
+		<!-- <script src="Box2d/Common/b2GrowableStack.js"></script> -->
+		<!-- <script src="Box2d/Common/b2Timer.js"></script> -->
+		
+		<!-- <script src="Box2d/Collision/b2Distance.js"></script> -->
+		<!-- <script src="Box2d/Collision/b2Collision.js"></script> -->
+		<!-- <script src="Box2d/Collision/b2DynamicTree.js"></script> -->
+		<!-- <script src="Box2d/Collision/b2BroadPhase.js"></script> -->
+		<!-- <script src="Box2d/Collision/b2CollideCircle.js"></script> -->
+		<!-- <script src="Box2d/Collision/b2CollideEdge.js"></script> -->
+		<!-- <script src="Box2d/Collision/b2CollidePolygon.js"></script> -->
+		<!-- <script src="Box2d/Collision/b2TimeOfImpact.js"></script> -->
+		
+		<!-- <script src="Box2d/Collision/Shapes/b2Shape.js"></script> -->
+		<!-- <script src="Box2d/Collision/Shapes/b2PolygonShape.js"></script> -->
+		<!-- <script src="Box2d/Collision/Shapes/b2EdgeShape.js"></script> -->
+		<!-- <script src="Box2d/Collision/Shapes/b2CircleShape.js"></script> -->
+		<!-- <script src="Box2d/Collision/Shapes/b2ChainShape.js"></script> -->
+		
+		
+		<!-- <script src ="Box2d/Dynamics/b2WorldCallbacks.js"></script> -->
+		<!-- <script src ="Box2d/Dynamics/b2TimeStep.js"></script> -->
+		<!-- <script src="Box2d/Particle/b2Particle.js"></script> -->
+		<!-- <script src="Box2d/Particle/b2ParticleGroup.js"></script> -->
+		<!-- <script src="Box2d/Particle/b2ParticleSystem.js"></script> -->
+		<!-- <script src="Box2d/Particle/b2StackQueue.js"></script> -->
+		<!-- <script src="Box2d/Particle/b2VoronoiDiagram.js"></script> -->
+		
+		<!-- <script src="Box2d/Dynamics/b2Fixture.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/b2Body.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Contacts/b2Contact.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Contacts/b2ContactFactory.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Contacts/b2CircleContact.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Contacts/b2ChainAndCircleContact.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Contacts/b2ChainAndPolygonContact.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Contacts/b2EdgeAndCircleContact.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Contacts/b2EdgeAndPolygonContact.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Contacts/b2PolygonAndCircleContact.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Contacts/b2PolygonContact.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Contacts/b2ContactSolver.js"></script> -->
+		
+		<!-- <script src="Box2d/Dynamics/Joints/b2Joint.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Joints/b2AreaJoint.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Joints/b2DistanceJoint.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Joints/b2FrictionJoint.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Joints/b2RevoluteJoint.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Joints/b2PrismaticJoint.js"></script> -->
+		
+		<!-- <script src="Box2d/Dynamics/Joints/b2MotorJoint.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Joints/b2GearJoint.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Joints/b2JointFactory.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Joints/b2MouseJoint.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Joints/b2PulleyJoint.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Joints/b2RopeJoint.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Joints/b2WeldJoint.js"></script> -->
+		<!-- <script src="Box2d/Dynamics/Joints/b2WheelJoint.js"></script> -->
+		
+		<!-- <script src ="Box2d/Dynamics/b2ContactManager.js"></script> -->
+		<!-- <script src ="Box2d/Dynamics/b2Island.js"></script> -->
+		<!-- <script src ="Box2d/Dynamics/b2World.js"></script> -->
+		
+		<!-- <script src="Box2d/Rope/b2Rope.js"></script> -->
+		
+		<!-- libs -->
+		<script src="lib/svg-inject.min.js"></script>
+		<script src="lib/box2d.min.js"></script>
+		<script src="lib/DebugDraw.js"></script>
+		<script src="lib/polygon.js"></script>
+		<script src="lib/BMPImageLoader.js"></script>
+		<script src="lib/hull.js"></script>
+		<script src="lib/highlight/highlight.min.js"></script>
+		<script src="lib/codemirror/codemirror.js"></script>
+		<script src="lib/codemirror/javascript.js"></script>
+		<script src="lib/codemirror/show-hint.js"></script>
+		<script src="lib/codemirror/javascript-hint.js"></script>
+		<!-- helpers -->
+		<script src="js/func.js"></script>
+		<!-- scripts -->
+		<script src="js/b2Loader.js"></script>
+		
+		<script src="js/Object/decomposeToConvex.js"></script>
+		<script src="js/Object/randomString.js"></script>
+		<script src="js/Object/Sprite.js"></script>
+		<script src="js/Object/world.js"></script>
+		<script src="js/Object/Body.js"></script>
+		<script src="js/Object/Shape.js"></script>
+		<script src="js/Object/Particle.js"></script>
+		<script src="js/Object/Vertex.js"></script>
+		<script src="js/Object/clone.js"></script>
+		<script src="js/Object/LineSegment.js"></script>
+		<script src="js/Object/toPhysics.js"></script>
+		<script src="js/Object/Joint.js"></script>
+		<script src="js/Object/Script.js"></script>
+		
+		<script src="js/UIManager/statusBar.js"></script>
+		<script src="js/UIManager/toolbar.js"></script>
+		
+		<script src="js/UIManager/SceneInfo.js"></script>
+		<script src="js/UIManager/propertiesMenu.js"></script>
+		<script src="js/UIManager/UIManager.js"></script>
+		
+		<script src="js/GameView.js"></script>
+		
+		<script src="js/fileExporter.js"></script>
+		<script src="js/terminal.js"></script>
+		
+		<script src="js/Viewport/InputHandler.js"></script>
+		<script src="js/Viewport/Navigator.js"></script>
+		<script src="js/Viewport/Renderer.js"></script>
+		<script src="js/Viewport/Viewport.js"></script>
+		<!-- <script src="js/SceneHistory.js"></script> -->
+		<script src="js/SceneManager.js"></script>
+		<script src="app.js"></script>
+	</html>										

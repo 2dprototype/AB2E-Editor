@@ -1,0 +1,32 @@
+{
+  "name": "ab2e-editor",
+  "version": "V0.0.1",
+  "description": "Advanced Box2D Editor",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "package-win64": "electron-packager . ab2e-editor --overwrite --asar=true --platform=win32 --arch=x64 --icon=icon/icon.ico --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"AB2E Editor\""
+  },
+  "author": "2DPrototype",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^15.5.2",
+    "electron-packager": "^15.5.1"
+  },
+  "dependencies": {
+    "@electron/remote": "^2.0.8",
+    "canvas2video": "^1.1.4",
+    "coffeescript": "^2.7.0",
+    "cson": "^7.20.0",
+    "from-xml": "^0.1.7",
+    "ini": "^3.0.1",
+    "json-complete": "^2.0.1",
+    "json5": "^2.2.1",
+    "jsonpack": "^1.1.5",
+    "jszip": "^3.10.1",
+    "node-cmd": "^5.0.0",
+    "pson": "^2.0.0",
+    "to-xml": "^0.1.7",
+    "yaml": "^2.1.0"
+  }
+}

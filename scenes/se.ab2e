@@ -1,0 +1,279 @@
+{
+    "info": {
+        "dateCreated": 1769576673395,
+        "lastModified": 1769578994453,
+        "favourite": false,
+        "comment": "",
+        "name": "New Scene",
+        "author": ""
+    },
+    "scene": {
+        "bodies": [
+            {
+                "id": "WN46Y8M5VUD72B8K",
+                "name": "body_0",
+                "userData": null,
+                "shapes": [
+                    {
+                        "id": "Y10L24OTCLUQSBJ8",
+                        "name": "shape_0",
+                        "shapeType": 0,
+                        "position": [
+                            45.061105426917706,
+                            60.127770696237896
+                        ],
+                        "scaleXY": [
+                            1,
+                            1
+                        ],
+                        "rotation": 0,
+                        "vertices": [
+                            {
+                                "x": 20.061105426917663,
+                                "y": 35.12777069623796,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 70.06110542691772,
+                                "y": 35.127770696237945,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 70.06110542691772,
+                                "y": 85.12777069623783,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 20.061105426917667,
+                                "y": 85.12777069623783,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            }
+                        ],
+                        "bounds": [
+                            45.06110542691769,
+                            60.12777069623789,
+                            50.00000000000006,
+                            49.999999999999886
+                        ],
+                        "centroid": [
+                            45.06110542691769,
+                            60.127770696237896
+                        ],
+                        "isSelected": false,
+                        "isHover": false,
+                        "inEditMode": false,
+                        "friction": 1,
+                        "restitution": 0.25,
+                        "density": 1,
+                        "isSensor": false,
+                        "maskBits": 65535,
+                        "categoryBits": 1,
+                        "groupIndex": 0,
+                        "userData": null,
+                        "width": 50,
+                        "height": 50
+                    }
+                ],
+                "position": [
+                    45.061105426917706,
+                    60.127770696237896
+                ],
+                "scaleXY": [
+                    1,
+                    1
+                ],
+                "rotation": 0,
+                "bounds": [
+                    45.06110542691769,
+                    60.12777069623789,
+                    50.00000000000006,
+                    49.999999999999886
+                ],
+                "isSelected": false,
+                "bodyType": 2,
+                "isBullet": false,
+                "isFixedRotation": false,
+                "linearDamping": 0,
+                "angularDamping": 0,
+                "linearVelocity": [
+                    0,
+                    0
+                ],
+                "angularVelocity": 0,
+                "isAwake": true,
+                "isActive": true,
+                "gravityScale": 1,
+                "cloneOf": null,
+                "selectedSprite": 0,
+                "sprites": []
+            },
+            {
+                "id": "2Z0XZS5W52QNIXEL",
+                "name": "body_0",
+                "userData": null,
+                "shapes": [
+                    {
+                        "id": "Y10L24OTCLUQSBJ8",
+                        "name": "shape_0",
+                        "shapeType": 0,
+                        "position": [
+                            103.25702165221038,
+                            -7.151834392445545
+                        ],
+                        "scaleXY": [
+                            1,
+                            1
+                        ],
+                        "rotation": 0,
+                        "vertices": [
+                            {
+                                "x": 78.2570216522104,
+                                "y": -32.15183439244554,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 128.25702165221043,
+                                "y": -32.151834392445544,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 128.25702165221043,
+                                "y": 17.848165607554478,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            },
+                            {
+                                "x": 78.2570216522104,
+                                "y": 17.84816560755447,
+                                "width": 10,
+                                "height": 10,
+                                "isSelected": false
+                            }
+                        ],
+                        "bounds": [
+                            103.25702165221041,
+                            -7.151834392445533,
+                            50.00000000000003,
+                            50.00000000000002
+                        ],
+                        "centroid": [
+                            103.2570216522104,
+                            -7.151834392445531
+                        ],
+                        "isSelected": false,
+                        "isHover": false,
+                        "inEditMode": false,
+                        "friction": 1,
+                        "restitution": 0.25,
+                        "density": 1,
+                        "isSensor": false,
+                        "maskBits": 65535,
+                        "categoryBits": 1,
+                        "groupIndex": 0,
+                        "userData": null,
+                        "width": 50,
+                        "height": 50
+                    }
+                ],
+                "position": [
+                    103.25702165221038,
+                    -7.151834392445545
+                ],
+                "scaleXY": [
+                    1,
+                    1
+                ],
+                "rotation": 0,
+                "bounds": [
+                    103.25702165221041,
+                    -7.151834392445533,
+                    50.00000000000003,
+                    50.00000000000002
+                ],
+                "isSelected": false,
+                "bodyType": 0,
+                "isBullet": false,
+                "isFixedRotation": false,
+                "linearDamping": 0,
+                "angularDamping": 0,
+                "linearVelocity": [
+                    0,
+                    0
+                ],
+                "angularVelocity": 0,
+                "isAwake": true,
+                "isActive": true,
+                "gravityScale": 1,
+                "cloneOf": "WN46Y8M5VUD72B8K",
+                "selectedSprite": 0,
+                "sprites": []
+            }
+        ],
+        "joints": [
+            {
+                "id": "GY5VWB2ML8FAJ3Y8",
+                "name": "joint_0",
+                "bodyIndexA": 0,
+                "bodyIndexB": 1,
+                "localAnchorA": [
+                    44.27989770948534,
+                    -7.470357795006109
+                ],
+                "localAnchorB": [
+                    44.27989770948534,
+                    -7.470357795006109
+                ],
+                "userData": null,
+                "collideConnected": false,
+                "jointType": 2,
+                "enableLimit": false,
+                "enableMotor": false,
+                "lowerAngle": 0,
+                "maxMotorTorque": 100,
+                "motorSpeed": 100,
+                "referenceAngle": 0,
+                "upperAngle": 0,
+                "position": [
+                    44.27989770948534,
+                    -7.470357795006109
+                ],
+                "scaleXY": [
+                    1,
+                    1
+                ],
+                "isSelected": false,
+                "inEditMode": false
+            }
+        ],
+        "particles": [],
+        "world": {
+            "gravity": [
+                0,
+                9.8
+            ],
+            "allowSleep": true,
+            "debugDraw": true,
+            "drawScale": 30,
+            "drawSprites": true
+        },
+        "scripts": [
+            {
+                "raw": "\nconsole.log(\"he;\")",
+                "type": "javascript"
+            }
+        ]
+    }
+}

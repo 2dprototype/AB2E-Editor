@@ -38,7 +38,6 @@ propertiesMenu.prototype.resizeLayout = function(){
 }
 
 propertiesMenu.prototype.init = function(){
-	var sceneManager = this.sceneManager;
 	var UIManager = this.UIManager;
 	var ref = this;
 	
@@ -66,8 +65,8 @@ propertiesMenu.prototype.init = function(){
 		
 		//getInfo
 		this.bodyProperties[18].onclick = function(){
-			if(sceneManager.selectedBodies.length == 1){
-				var str = JSON5.stringify(sceneManager.selectedBodies[0].get_properties(), null, 4);
+			if(ref.sceneManager.selectedBodies.length == 1){
+				var str = JSON5.stringify(ref.sceneManager.selectedBodies[0].get_properties(), null, 4);
 				var h =  hljs.highlight(str, {language: 'json'});
 				Editor.terminal.println(`<code><pre>${h.value}</pre></code>`);
 				Editor.terminal.show();
@@ -75,126 +74,126 @@ propertiesMenu.prototype.init = function(){
 		}
 		//bodyType
 		this.bodyProperties[19].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].bodyType = this.value;
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].bodyType = this.value;
 			}
-			sceneManager.recordHistory();
+			ref.sceneManager.recordHistory();
 		}
 		//name
 		this.bodyProperties[1].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].name = this.value;
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].name = this.value;
 			}
-			sceneManager.recordHistory();
+			ref.sceneManager.recordHistory();
 		}
 		//userData
 		this.bodyProperties[2].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].userData = eval(this.value);
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].userData = eval(this.value);
 			}
 		}
 		//position[0]
 		this.bodyProperties[3].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				var pos = sceneManager.selectedBodies[i].position;
-				sceneManager.selectedBodies[i].setPosition(parseFloat(this.value), pos[1]);
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				var pos = ref.sceneManager.selectedBodies[i].position;
+				ref.sceneManager.selectedBodies[i].setPosition(parseFloat(this.value), pos[1]);
 			}
-			sceneManager.recordHistory();
+			ref.sceneManager.recordHistory();
 		}
 		//position[1]
 		this.bodyProperties[4].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				var pos = sceneManager.selectedBodies[i].position;
-				sceneManager.selectedBodies[i].setPosition(pos[0], parseFloat(this.value));
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				var pos = ref.sceneManager.selectedBodies[i].position;
+				ref.sceneManager.selectedBodies[i].setPosition(pos[0], parseFloat(this.value));
 			}
-			sceneManager.recordHistory();
+			ref.sceneManager.recordHistory();
 		}	
 		//rotation
 		this.bodyProperties[5].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].setRotation(parseFloat(this.value));
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].setRotation(parseFloat(this.value));
 			}
-			sceneManager.recordHistory();
+			ref.sceneManager.recordHistory();
 		}	
 		//scale_x
 		this.bodyProperties[6].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				var s = sceneManager.selectedBodies[i].scaleXY;
-				sceneManager.selectedBodies[i].setScale(parseFloat(this.value), s[1]);
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				var s = ref.sceneManager.selectedBodies[i].scaleXY;
+				ref.sceneManager.selectedBodies[i].setScale(parseFloat(this.value), s[1]);
 			}
-			sceneManager.recordHistory();
+			ref.sceneManager.recordHistory();
 		}	
 		//scale_y
 		this.bodyProperties[7].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				var s = sceneManager.selectedBodies[i].scaleXY;
-				sceneManager.selectedBodies[i].setScale(s[0], parseFloat(this.value));
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				var s = ref.sceneManager.selectedBodies[i].scaleXY;
+				ref.sceneManager.selectedBodies[i].setScale(s[0], parseFloat(this.value));
 			}
 		}	
 		//linearVelocity[0]
 		this.bodyProperties[8].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].linearVelocity[0] = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].linearVelocity[0] = parseFloat(this.value);
 			}
 		}
 		//linearVelocity[1]
 		this.bodyProperties[9].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].linearVelocity[1] = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].linearVelocity[1] = parseFloat(this.value);
 			}
 		}
 		//angularVelocity
 		this.bodyProperties[10].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].angularVelocity = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].angularVelocity = parseFloat(this.value);
 			}
 		}
 		//linearDamping
 		this.bodyProperties[11].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].linearDamping = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].linearDamping = parseFloat(this.value);
 			}
 		}
 		//angularDamping
 		this.bodyProperties[12].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].angularDamping = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].angularDamping = parseFloat(this.value);
 			}
 		}
 		//isBullet
 		this.bodyProperties[13].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].isBullet = this.checked;
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].isBullet = this.checked;
 			}
 		}
 		//isFixedRotation
 		this.bodyProperties[14].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].isFixedRotation = this.checked;
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].isFixedRotation = this.checked;
 			}
 		}
 		//isActive
 		this.bodyProperties[15].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].isActive = this.checked;
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].isActive = this.checked;
 			}
 		}
 		//isAwake
 		this.bodyProperties[16].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].isAwake = this.checked;
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].isAwake = this.checked;
 			}
 		}
 		//gravityScale
 		this.bodyProperties[17].onchange = function(){
-			for(i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].gravityScale =  parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].gravityScale =  parseFloat(this.value);
 			}
 		}
 		//bodyEditMode
 		this.bodyProperties[0].onclick = function(){
-			if(sceneManager.selectedBodies.length > 0){
-				sceneManager.enterBodyEditMode();
+			if(ref.sceneManager.selectedBodies.length > 0){
+				ref.sceneManager.enterBodyEditMode();
 				ref.updateSelectionProperty();
 				ref.UIManager.statusBar.update();
 			}
@@ -212,8 +211,8 @@ propertiesMenu.prototype.init = function(){
 		
 		//done
 		this.fixtureProperties[0].onclick = function(){
-			if(sceneManager.state != sceneManager.STATE_SHAPE_EDIT_MODE){
-				sceneManager.enterDefaultMode();
+			if(ref.sceneManager.state != ref.sceneManager.STATE_SHAPE_EDIT_MODE){
+				ref.sceneManager.enterDefaultMode();
 				ref.updateSelectionProperty();		    
 			}
 			else{
@@ -222,95 +221,95 @@ propertiesMenu.prototype.init = function(){
 		}
 		//vertex edit
 		this.fixtureProperties[1].onclick = function(){
-			if(sceneManager.state == sceneManager.STATE_BODY_EDIT_MODE) sceneManager.enterShapeEditMode();
-			else if(sceneManager.state == sceneManager.STATE_SHAPE_EDIT_MODE) sceneManager.enterBodyEditMode();
-			if(sceneManager.state == sceneManager.STATE_SHAPE_EDIT_MODE) this.value = 'Done';
+			if(ref.sceneManager.state == ref.sceneManager.STATE_BODY_EDIT_MODE) ref.sceneManager.enterShapeEditMode();
+			else if(ref.sceneManager.state == ref.sceneManager.STATE_SHAPE_EDIT_MODE) ref.sceneManager.enterBodyEditMode();
+			if(ref.sceneManager.state == ref.sceneManager.STATE_SHAPE_EDIT_MODE) this.value = 'Done';
 			else this.value = 'Edit';
 			ref.updateSelectionProperty();
 		}
 		//userData
 		this.fixtureProperties[2].onchange = function(){
-			for(i = 0; i < sceneManager.selectedShapes.length; i++){
-				sceneManager.selectedShapes[i].userData = eval(this.value);
+			for(i = 0; i < ref.sceneManager.selectedShapes.length; i++){
+				ref.sceneManager.selectedShapes[i].userData = eval(this.value);
 			}
 		}
 		//position_x
 		this.fixtureProperties[3].onchange = function(){
-			for(i = 0; i < sceneManager.selectedShapes.length; i++){
-				var pos = sceneManager.selectedShapes[i].position;
-				sceneManager.selectedShapes[i].setPosition(parseFloat(this.value), pos[1]);
+			for(i = 0; i < ref.sceneManager.selectedShapes.length; i++){
+				var pos = ref.sceneManager.selectedShapes[i].position;
+				ref.sceneManager.selectedShapes[i].setPosition(parseFloat(this.value), pos[1]);
 			}
-			sceneManager.recordHistory();
+			ref.sceneManager.recordHistory();
 		}	
 		//position_y
 		this.fixtureProperties[4].onchange = function(){
-			for(i = 0; i < sceneManager.selectedShapes.length; i++){
-				var pos = sceneManager.selectedShapes[i].position;
-				sceneManager.selectedShapes[i].setPosition(pos[0], parseFloat(this.value));
+			for(i = 0; i < ref.sceneManager.selectedShapes.length; i++){
+				var pos = ref.sceneManager.selectedShapes[i].position;
+				ref.sceneManager.selectedShapes[i].setPosition(pos[0], parseFloat(this.value));
 			}
-			sceneManager.recordHistory();
+			ref.sceneManager.recordHistory();
 		}	
 		//rotation
 		this.fixtureProperties[5].onchange = function(){
-			for(i = 0; i < sceneManager.selectedShapes.length; i++){
-				sceneManager.selectedShapes[i].setRotation(parseFloat(this.value));
+			for(i = 0; i < ref.sceneManager.selectedShapes.length; i++){
+				ref.sceneManager.selectedShapes[i].setRotation(parseFloat(this.value));
 			}
-			sceneManager.recordHistory();
+			ref.sceneManager.recordHistory();
 		}
 		//scale_x
 		this.fixtureProperties[6].onchange = function(){
-			for(i = 0; i < sceneManager.selectedShapes.length; i++){
-				var s = sceneManager.selectedShapes[i].scaleXY;
-				sceneManager.selectedShapes[i].setScale(s[0], parseFloat(this.value));
+			for(i = 0; i < ref.sceneManager.selectedShapes.length; i++){
+				var s = ref.sceneManager.selectedShapes[i].scaleXY;
+				ref.sceneManager.selectedShapes[i].setScale(s[0], parseFloat(this.value));
 			}
 		}	
 		//scale_y
 		this.fixtureProperties[7].onchange = function(){
-			for(i = 0; i < sceneManager.selectedShapes.length; i++){
-				var s = sceneManager.selectedShapes[i].scaleXY;
-				sceneManager.selectedShapes[i].setScale(parseFloat(this.value), s[1]);
+			for(i = 0; i < ref.sceneManager.selectedShapes.length; i++){
+				var s = ref.sceneManager.selectedShapes[i].scaleXY;
+				ref.sceneManager.selectedShapes[i].setScale(parseFloat(this.value), s[1]);
 			}
 		}	
 		//density
 		this.fixtureProperties[8].onchange = function(){
-			for(i = 0; i < sceneManager.selectedShapes.length; i++){
-				sceneManager.selectedShapes[i].density = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedShapes.length; i++){
+				ref.sceneManager.selectedShapes[i].density = parseFloat(this.value);
 			}
 		}	
 		//friction
 		this.fixtureProperties[9].onchange = function(){
-			for(i = 0; i < sceneManager.selectedShapes.length; i++){
-				sceneManager.selectedShapes[i].friction = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedShapes.length; i++){
+				ref.sceneManager.selectedShapes[i].friction = parseFloat(this.value);
 			}
 		}	
 		//restitution
 		this.fixtureProperties[10].onchange = function(){
-			for(i = 0; i < sceneManager.selectedShapes.length; i++){
-				sceneManager.selectedShapes[i].restitution = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedShapes.length; i++){
+				ref.sceneManager.selectedShapes[i].restitution = parseFloat(this.value);
 			}
 		}
 		//maskBits
 		this.fixtureProperties[11].onchange = function(){
-			for(i = 0; i < sceneManager.selectedShapes.length; i++){
-				sceneManager.selectedShapes[i].maskBits = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedShapes.length; i++){
+				ref.sceneManager.selectedShapes[i].maskBits = parseFloat(this.value);
 			}
 		}
 		//categoryBits
 		this.fixtureProperties[12].onchange = function(){
-			for(i = 0; i < sceneManager.selectedShapes.length; i++){
-				sceneManager.selectedShapes[i].categoryBits = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedShapes.length; i++){
+				ref.sceneManager.selectedShapes[i].categoryBits = parseFloat(this.value);
 			}
 		}
 		//groupIndex
 		this.fixtureProperties[13].onchange = function(){
-			for(i = 0; i < sceneManager.selectedShapes.length; i++){
-				sceneManager.selectedShapes[i].groupIndex = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedShapes.length; i++){
+				ref.sceneManager.selectedShapes[i].groupIndex = parseFloat(this.value);
 			}
 		}
 		//isSensor
 		this.fixtureProperties[14].onchange = function(){
-			for(i = 0; i < sceneManager.selectedShapes.length; i++){
-				sceneManager.selectedShapes[i].isSensor = this.checked;
+			for(i = 0; i < ref.sceneManager.selectedShapes.length; i++){
+				ref.sceneManager.selectedShapes[i].isSensor = this.checked;
 			}
 		}
 	}
@@ -328,221 +327,221 @@ propertiesMenu.prototype.init = function(){
 		
 		//edit joint
 		this.jointProperties[0].onclick = function(){
-			if(sceneManager.selectedJoints.length == 1){
-				if (sceneManager.state == sceneManager.STATE_DEFAULT_MODE) sceneManager.enterJointEditMode();
-				else if(sceneManager.state == sceneManager.STATE_JOINT_EDIT_MODE) sceneManager.enterDefaultMode();
-				if(sceneManager.state == sceneManager.STATE_JOINT_EDIT_MODE) this.value = 'Done';
+			if(ref.sceneManager.selectedJoints.length == 1){
+				if (ref.sceneManager.state == ref.sceneManager.STATE_DEFAULT_MODE) ref.sceneManager.enterJointEditMode();
+				else if(ref.sceneManager.state == ref.sceneManager.STATE_JOINT_EDIT_MODE) ref.sceneManager.enterDefaultMode();
+				if(ref.sceneManager.state == ref.sceneManager.STATE_JOINT_EDIT_MODE) this.value = 'Done';
 				else this.value = 'Edit';
 				ref.updateSelectionProperty();
 			}
 		}
 		//name
 		this.jointProperties[1].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].name = this.value;
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].name = this.value;
 			}
 			ref.updateJointProperties();
 		}	
 		//userData
 		this.jointProperties[2].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].userData = eval(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].userData = eval(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//collideConnected
 		this.jointProperties[3].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].collideConnected = this.checked;
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].collideConnected = this.checked;
 			}
 			ref.updateJointProperties();
 		}
 		//frequencyHZ
 		this.jointProperties[4].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].frequencyHZ = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].frequencyHZ = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}	
 		//dampingRatio
 		this.jointProperties[5].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].dampingRatio = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].dampingRatio = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//localAnchorA[0]
 		this.jointProperties[6].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].localAnchorA[0] = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].localAnchorA[0] = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//localAnchorA[1]
 		this.jointProperties[7].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].localAnchorA[1] = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].localAnchorA[1] = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//localAnchorB[0]
 		this.jointProperties[8].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].localAnchorB[0] = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].localAnchorB[0] = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//localAnchorB[1]
 		this.jointProperties[9].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].localAnchorB[1] = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].localAnchorB[1] = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//referenceAngle
 		this.jointProperties[10].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].referenceAngle = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].referenceAngle = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//lowerAngle
 		this.jointProperties[11].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].lowerAngle = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].lowerAngle = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//upperAngle
 		this.jointProperties[12].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].upperAngle = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].upperAngle = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//enableLimit
 		this.jointProperties[13].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].enableLimit = this.checked;
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].enableLimit = this.checked;
 			}
 			ref.updateJointProperties();
 		}	
 		//enableMotor
 		this.jointProperties[14].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].enableMotor = this.checked;
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].enableMotor = this.checked;
 			}
 			ref.updateJointProperties();
 		}
 		//motorSpeed
 		this.jointProperties[15].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].motorSpeed = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].motorSpeed = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}	
 		//maxMotorTorque
 		this.jointProperties[16].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].maxMotorTorque = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].maxMotorTorque = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//lowerTranslation
 		this.jointProperties[17].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].lowerTranslation = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].lowerTranslation = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//upperTranslation
 		this.jointProperties[18].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].upperTranslation = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].upperTranslation = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}		
 		//ratio
 		this.jointProperties[19].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].frequencyHZ = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].frequencyHZ = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//groundAnchorA[0]
 		this.jointProperties[20].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].groundAnchorA[0] = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].groundAnchorA[0] = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//groundAnchorA[1]
 		this.jointProperties[21].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].groundAnchorA[1] = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].groundAnchorA[1] = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//groundAnchorB[0]
 		this.jointProperties[22].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].groundAnchorB[0] = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].groundAnchorB[0] = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//groundAnchorB[1]
 		this.jointProperties[23].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].groundAnchorB[1] = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].groundAnchorB[1] = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//maxLength
 		this.jointProperties[24].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].frequencyHZ = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].frequencyHZ = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//maxForce
 		this.jointProperties[25].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].maxForce = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].maxForce = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//maxTorque
 		this.jointProperties[26].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].maxTorque = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].maxTorque = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//angularOffset
 		this.jointProperties[27].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].angularOffset = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].angularOffset = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}	
 		//linearOffset[0]
 		this.jointProperties[28].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].linearOffset[0] = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].linearOffset[0] = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//linearOffset[1]
 		this.jointProperties[29].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].linearOffset[1] = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].linearOffset[1] = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
 		//correctionFactor
 		this.jointProperties[29].onchange = function(){
-			for(i = 0; i < sceneManager.selectedJoints.length; i++){
-				sceneManager.selectedJoints[i].correctionFactor = parseFloat(this.value);
+			for(i = 0; i < ref.sceneManager.selectedJoints.length; i++){
+				ref.sceneManager.selectedJoints[i].correctionFactor = parseFloat(this.value);
 			}
 			ref.updateJointProperties();
 		}
@@ -587,9 +586,9 @@ propertiesMenu.prototype.init = function(){
 						fs.copyFileSync(imgpath, dir + copyfile);
 						src = copyfile;
 					}
-					for(j = 0; j < sceneManager.selectedBodies.length; j++){
-						sceneManager.selectedBodies[j].setSprite(src, dir + src);
-						sceneManager.selectedBodies[j].selectedSprite = 0;
+					for(j = 0; j < ref.sceneManager.selectedBodies.length; j++){
+						ref.sceneManager.selectedBodies[j].setSprite(src, dir + src);
+						ref.sceneManager.selectedBodies[j].selectedSprite = 0;
 					}
 				}
 			}
@@ -600,56 +599,56 @@ propertiesMenu.prototype.init = function(){
 		}
 		//list of images
 		this.spriteProperties[13].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedBodies.length; i++){
-				sceneManager.selectedBodies[i].selectedSprite = parseInt(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				ref.sceneManager.selectedBodies[i].selectedSprite = parseInt(this.value);
 			}
 			ref.updateSelectionProperty();
 		}
 		//width
 		this.spriteProperties[1].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedBodies.length; i++){
-				if(sceneManager.selectedBodies[i].sprites.length > 0){
-					var k = sceneManager.selectedBodies[i].selectedSprite;
-					var height =sceneManager.selectedBodies[i].sprites[k].height;
-					sceneManager.selectedBodies[i].sprites[k].setScale(parseFloat(this.value), height);
+			for (var i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				if(ref.sceneManager.selectedBodies[i].sprites.length > 0){
+					var k = ref.sceneManager.selectedBodies[i].selectedSprite;
+					var height =ref.sceneManager.selectedBodies[i].sprites[k].height;
+					ref.sceneManager.selectedBodies[i].sprites[k].setScale(parseFloat(this.value), height);
 				}
 			}
 		}
 		//height
 		this.spriteProperties[2].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedBodies.length; i++){
-				if(sceneManager.selectedBodies[i].sprites.length > 0){
-					var k = sceneManager.selectedBodies[i].selectedSprite;
-					var width =sceneManager.selectedBodies[i].sprites[k].width;
-					sceneManager.selectedBodies[i].sprites[k].setScale(width, parseFloat(this.value));
+			for (var i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				if(ref.sceneManager.selectedBodies[i].sprites.length > 0){
+					var k = ref.sceneManager.selectedBodies[i].selectedSprite;
+					var width =ref.sceneManager.selectedBodies[i].sprites[k].width;
+					ref.sceneManager.selectedBodies[i].sprites[k].setScale(width, parseFloat(this.value));
 				}
 			}
 		}
 		//x
 		this.spriteProperties[3].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedBodies.length; i++){
-				if(sceneManager.selectedBodies[i].sprites.length > 0){
-					var k = sceneManager.selectedBodies[i].selectedSprite;
-					var y = sceneManager.selectedBodies[i].sprites[k].y;
-					sceneManager.selectedBodies[i].sprites[k].setPosition(parseFloat(this.value), y);
+			for (var i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				if(ref.sceneManager.selectedBodies[i].sprites.length > 0){
+					var k = ref.sceneManager.selectedBodies[i].selectedSprite;
+					var y = ref.sceneManager.selectedBodies[i].sprites[k].y;
+					ref.sceneManager.selectedBodies[i].sprites[k].setPosition(parseFloat(this.value), y);
 				}
 			}
 		}
 		//y
 		this.spriteProperties[4].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedBodies.length; i++){
-				if(sceneManager.selectedBodies[i].sprites.length > 0){
-					var k = sceneManager.selectedBodies[i].selectedSprite;
-					var x = sceneManager.selectedBodies[i].sprites[k].x;
-					sceneManager.selectedBodies[i].sprites[k].setPosition(x, parseFloat(this.value));
+			for (var i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				if(ref.sceneManager.selectedBodies[i].sprites.length > 0){
+					var k = ref.sceneManager.selectedBodies[i].selectedSprite;
+					var x = ref.sceneManager.selectedBodies[i].sprites[k].x;
+					ref.sceneManager.selectedBodies[i].sprites[k].setPosition(x, parseFloat(this.value));
 				}
 			}
 		}
 		//rotation
 		this.spriteProperties[5].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedBodies.length; i++){
-				if(sceneManager.selectedBodies[i].sprites.length > 0){
-					var body = sceneManager.selectedBodies[i];
+			for (var i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				if(ref.sceneManager.selectedBodies[i].sprites.length > 0){
+					var body = ref.sceneManager.selectedBodies[i];
 					var k = body.selectedSprite;
 					body.sprites[k].setRotation(parseFloat(this.value), body);
 				}
@@ -657,19 +656,19 @@ propertiesMenu.prototype.init = function(){
 		}
 		//opacity
 		this.spriteProperties[6].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedBodies.length; i++){
-				if(sceneManager.selectedBodies[i].sprites.length > 0){
-					var k = sceneManager.selectedBodies[i].selectedSprite;
-					sceneManager.selectedBodies[i].sprites[k].opacity = parseFloat(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				if(ref.sceneManager.selectedBodies[i].sprites.length > 0){
+					var k = ref.sceneManager.selectedBodies[i].selectedSprite;
+					ref.sceneManager.selectedBodies[i].sprites[k].opacity = parseFloat(this.value);
 				}
 			}
 		}		
 		//flip[0]
 		this.spriteProperties[7].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedBodies.length; i++){
-				if(sceneManager.selectedBodies[i].sprites.length > 0){
-					var k = sceneManager.selectedBodies[i].selectedSprite;
-					var sprite = sceneManager.selectedBodies[i].sprites[k];
+			for (var i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				if(ref.sceneManager.selectedBodies[i].sprites.length > 0){
+					var k = ref.sceneManager.selectedBodies[i].selectedSprite;
+					var sprite = ref.sceneManager.selectedBodies[i].sprites[k];
 					if(this.checked) sprite.flipX(-1);
 					else sprite.flipX(1);
 				}
@@ -677,10 +676,10 @@ propertiesMenu.prototype.init = function(){
 		}	
 		//flip[1]
 		this.spriteProperties[8].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedBodies.length; i++){
-				if(sceneManager.selectedBodies[i].sprites.length > 0){
-					var k = sceneManager.selectedBodies[i].selectedSprite;
-					var sprite = sceneManager.selectedBodies[i].sprites[k];
+			for (var i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				if(ref.sceneManager.selectedBodies[i].sprites.length > 0){
+					var k = ref.sceneManager.selectedBodies[i].selectedSprite;
+					var sprite = ref.sceneManager.selectedBodies[i].sprites[k];
 					if(this.checked) sprite.flipY(-1);
 					else sprite.flipY(1);
 				}
@@ -688,26 +687,26 @@ propertiesMenu.prototype.init = function(){
 		}
 		//zIndex
 		this.spriteProperties[9].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedBodies.length; i++){
-				if(sceneManager.selectedBodies[i].sprites.length > 0){
-					var k = sceneManager.selectedBodies[i].selectedSprite;
-					sceneManager.selectedBodies[i].sprites[k].zIndex = parseInt(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				if(ref.sceneManager.selectedBodies[i].sprites.length > 0){
+					var k = ref.sceneManager.selectedBodies[i].selectedSprite;
+					ref.sceneManager.selectedBodies[i].sprites[k].zIndex = parseInt(this.value);
 				}
 			}
 		}
 		
 		//edit
 		this.spriteProperties[10].onclick = function(){
-			if(sceneManager.selectedBodies.length == 1){
-				var body = sceneManager.selectedBodies[0];
+			if(ref.sceneManager.selectedBodies.length == 1){
+				var body = ref.sceneManager.selectedBodies[0];
 				if(body.sprites.length > 0){
 					var sprite = body.sprites[body.selectedSprite];
-					if(sceneManager.state == sceneManager.STATE_DEFAULT_MODE) sceneManager.enterImageVertexEditMode();
-					else if(sceneManager.state == sceneManager.STATE_IMAGE_VERTEX_EDIT_MODE){
-						sceneManager.enterDefaultMode();
+					if(ref.sceneManager.state == ref.sceneManager.STATE_DEFAULT_MODE) ref.sceneManager.enterImageVertexEditMode();
+					else if(ref.sceneManager.state == ref.sceneManager.STATE_IMAGE_VERTEX_EDIT_MODE){
+						ref.sceneManager.enterDefaultMode();
 						sprite.inEditMode = false;
 					}
-					if(sceneManager.state == sceneManager.STATE_IMAGE_VERTEX_EDIT_MODE) this.value = 'Done';
+					if(ref.sceneManager.state == ref.sceneManager.STATE_IMAGE_VERTEX_EDIT_MODE) this.value = 'Done';
 					else this.value = 'Edit';
 				}
 			}
@@ -716,23 +715,23 @@ propertiesMenu.prototype.init = function(){
 		
 		//clear
 		this.spriteProperties[12].onclick = function(){
-			for (var i = 0; i < sceneManager.selectedBodies.length; i++){
-				var sprite = sceneManager.selectedBodies[i].sprites;
-				var index = sceneManager.selectedBodies[i].selectedSprite;
+			for (var i = 0; i < ref.sceneManager.selectedBodies.length; i++){
+				var sprite = ref.sceneManager.selectedBodies[i].sprites;
+				var index = ref.sceneManager.selectedBodies[i].selectedSprite;
 				if (index > -1) sprite.splice(index, 1);
-				sceneManager.selectedBodies[i].selectedSprite = sceneManager.selectedBodies[i].sprites.length - 1;
+				ref.sceneManager.selectedBodies[i].selectedSprite = ref.sceneManager.selectedBodies[i].sprites.length - 1;
 			}
 			ref.updateSelectionProperty();
 		}
 		// edit image
 		this.spriteProperties[11].onclick = function(){
-			if(sceneManager.selectedBodies.length == 1){
-				var body = sceneManager.selectedBodies[0];
+			if(ref.sceneManager.selectedBodies.length == 1){
+				var body = ref.sceneManager.selectedBodies[0];
 				if(body.sprites.length > 0){
 					var sprite = body.sprites[body.selectedSprite];
-					if(sceneManager.state == sceneManager.STATE_DEFAULT_MODE) sceneManager.enterImageEditMode();
-					else if(sceneManager.state == sceneManager.STATE_IMAGE_EDIT_MODE) sceneManager.enterDefaultMode();
-					if(sceneManager.state == sceneManager.STATE_IMAGE_EDIT_MODE) this.value = 'Done';
+					if(ref.sceneManager.state == ref.sceneManager.STATE_DEFAULT_MODE) ref.sceneManager.enterImageEditMode();
+					else if(ref.sceneManager.state == ref.sceneManager.STATE_IMAGE_EDIT_MODE) ref.sceneManager.enterDefaultMode();
+					if(ref.sceneManager.state == ref.sceneManager.STATE_IMAGE_EDIT_MODE) this.value = 'Done';
 					else this.value = 'Edit';
 				}
 			}
@@ -757,18 +756,18 @@ propertiesMenu.prototype.init = function(){
 		this.particlePropertyRows = document.getElementById('particle-properties').querySelectorAll("tr");
 		
 		this.particleProperties[5].onclick = function(){
-			if(sceneManager.selectedParticles.length == 1){
-				var p = sceneManager.selectedParticles[0].shape;
+			if(ref.sceneManager.selectedParticles.length == 1){
+				var p = ref.sceneManager.selectedParticles[0].shape;
 				if(p.type == 2){
-					if(sceneManager.state == sceneManager.STATE_DEFAULT_MODE){
-						sceneManager.enterParticleEditMode();
+					if(ref.sceneManager.state == ref.sceneManager.STATE_DEFAULT_MODE){
+						ref.sceneManager.enterParticleEditMode();
 						p.inEditMode = true;
 					}
-					else if(sceneManager.state == sceneManager.STATE_PARTICLE_EDIT_MODE){
-						sceneManager.enterDefaultMode();
+					else if(ref.sceneManager.state == ref.sceneManager.STATE_PARTICLE_EDIT_MODE){
+						ref.sceneManager.enterDefaultMode();
 						p.inEditMode = false;
 					}
-					if(sceneManager.state == sceneManager.STATE_PARTICLE_EDIT_MODE) this.value = 'Done';
+					if(ref.sceneManager.state == ref.sceneManager.STATE_PARTICLE_EDIT_MODE) this.value = 'Done';
 					else this.value = 'Edit';
 				}
 			}
@@ -776,121 +775,121 @@ propertiesMenu.prototype.init = function(){
 		}
 		//name
 		this.particleProperties[0].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				sceneManager.selectedParticles[i].name = this.value;
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				ref.sceneManager.selectedParticles[i].name = this.value;
 			}
 		}
 		//userData
 		this.particleProperties[1].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				sceneManager.selectedParticles[i].userData = eval(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				ref.sceneManager.selectedParticles[i].userData = eval(this.value);
 			}
 		}
 		//position[0]
 		this.particleProperties[2].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				var ps = sceneManager.selectedParticles[i].position;
-				sceneManager.selectedParticles[i].setPosition(parseFloat(this.value), ps[1]);
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				var ps = ref.sceneManager.selectedParticles[i].position;
+				ref.sceneManager.selectedParticles[i].setPosition(parseFloat(this.value), ps[1]);
 			}
 		}
 		//position[1]
 		this.particleProperties[3].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				var ps = sceneManager.selectedParticles[i].position;
-				sceneManager.selectedParticles[i].setPosition(ps[0], parseFloat(this.value));
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				var ps = ref.sceneManager.selectedParticles[i].position;
+				ref.sceneManager.selectedParticles[i].setPosition(ps[0], parseFloat(this.value));
 			}
 		}	
 		//rotation
 		this.particleProperties[4].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				sceneManager.selectedParticles[i].setRotation(parseFloat(this.value));
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				ref.sceneManager.selectedParticles[i].setRotation(parseFloat(this.value));
 			}
 		}
 		//radius > circle shape
 		this.particleProperties[6].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				var p =  sceneManager.selectedParticles[i];
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				var p =  ref.sceneManager.selectedParticles[i];
 				if(p.shape.type == 0) p.shape.radius = parseFloat(this.value);
 			}
 		}	
 		//width > box shape
 		this.particleProperties[7].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				var p =  sceneManager.selectedParticles[i];
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				var p =  ref.sceneManager.selectedParticles[i];
 				if(p.shape.type == 1) p.shape.width = parseFloat(this.value);
 			}
 		}
 		//height > box shape
 		this.particleProperties[8].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				var p =  sceneManager.selectedParticles[i];
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				var p =  ref.sceneManager.selectedParticles[i];
 				if(p.shape.type == 1) p.shape.height = parseFloat(this.value);
 			}
 		}	
 		//strength
 		this.particleProperties[13].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				sceneManager.selectedParticles[i].strength = parseFloat(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				ref.sceneManager.selectedParticles[i].strength = parseFloat(this.value);
 			}
 		}
 		//lifetime
 		this.particleProperties[14].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				sceneManager.selectedParticles[i].lifetime = parseFloat(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				ref.sceneManager.selectedParticles[i].lifetime = parseFloat(this.value);
 			}
 		}
 		//stride
 		this.particleProperties[15].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				sceneManager.selectedParticles[i].stride = parseFloat(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				ref.sceneManager.selectedParticles[i].stride = parseFloat(this.value);
 			}
 		}
 		//particle radius
 		this.particleProperties[16].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				sceneManager.selectedParticles[i].radius = parseFloat(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				ref.sceneManager.selectedParticles[i].radius = parseFloat(this.value);
 			}
 		}
 		//angularVelocity
 		this.particleProperties[17].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				sceneManager.selectedParticles[i].angularVelocity = parseFloat(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				ref.sceneManager.selectedParticles[i].angularVelocity = parseFloat(this.value);
 			}
 		}	
 		//linearVelocity[0]
 		this.particleProperties[18].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				sceneManager.selectedParticles[i].linearVelocity[0] = parseFloat(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				ref.sceneManager.selectedParticles[i].linearVelocity[0] = parseFloat(this.value);
 			}
 		}
 		//linearVelocity[1]
 		this.particleProperties[19].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				sceneManager.selectedParticles[i].linearVelocity[1] = parseFloat(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				ref.sceneManager.selectedParticles[i].linearVelocity[1] = parseFloat(this.value);
 			}
 		}
 		//color r
 		this.particleProperties[9].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				sceneManager.selectedParticles[i].color[0] = parseInt(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				ref.sceneManager.selectedParticles[i].color[0] = parseInt(this.value);
 			}
 		}
 		//color g
 		this.particleProperties[10].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				sceneManager.selectedParticles[i].color[1] = parseInt(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				ref.sceneManager.selectedParticles[i].color[1] = parseInt(this.value);
 			}
 		}
 		//color b
 		this.particleProperties[11].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				sceneManager.selectedParticles[i].color[2] = parseInt(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				ref.sceneManager.selectedParticles[i].color[2] = parseInt(this.value);
 			}
 		}
 		//color a
 		this.particleProperties[12].onchange = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
-				sceneManager.selectedParticles[i].color[3] = parseFloat(this.value);
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
+				ref.sceneManager.selectedParticles[i].color[3] = parseFloat(this.value);
 			}
 		}
 	}
@@ -905,7 +904,7 @@ propertiesMenu.prototype.init = function(){
 		
 		//setFlags
 		this.particleFlagsList[this.particleFlagsList.length - 1].onclick = function(){
-			for (var i = 0; i < sceneManager.selectedParticles.length; i++){
+			for (var i = 0; i < ref.sceneManager.selectedParticles.length; i++){
 				var flags = [];
 				for(var f = 0; f < ref.particleFlagsList.length - 1; f++){
 					if(ref.particleFlagsList[f].checked){
@@ -915,7 +914,7 @@ propertiesMenu.prototype.init = function(){
 						flags.push(null);
 					}
 				}
-				sceneManager.selectedParticles[i].flags = flags;
+				ref.sceneManager.selectedParticles[i].flags = flags;
 			}
 			ref.updateParticleProperties();
 		}
@@ -983,27 +982,27 @@ propertiesMenu.prototype.init = function(){
 		
 		//gravity[0]
 		this.gameviewProperties[0].onchange = function(){
-			sceneManager.world.gravity[0] = parseFloat(this.value);
+			ref.sceneManager.world.gravity[0] = parseFloat(this.value);
 		}
 		//gravity[1]
 		this.gameviewProperties[1].onchange = function(){
-			sceneManager.world.gravity[1] = parseFloat(this.value);
+			ref.sceneManager.world.gravity[1] = parseFloat(this.value);
 		}
 		//allowSleep
 		this.gameviewProperties[2].onchange = function(){
-			sceneManager.world.allowSleep = this.checked;
+			ref.sceneManager.world.allowSleep = this.checked;
 		}
 		//debugDraw
 		this.gameviewProperties[3].onchange = function(){
-			sceneManager.world.debugDraw = this.checked;
+			ref.sceneManager.world.debugDraw = this.checked;
 		}	
 		//drawScale
 		this.gameviewProperties[4].onchange = function(){
-			sceneManager.world.drawScale = parseFloat(this.value);
+			ref.sceneManager.world.drawScale = parseFloat(this.value);
 		}
 		//drawSprites
 		this.gameviewProperties[5].onchange = function(){
-			sceneManager.world.drawSprites = this.checked;
+			ref.sceneManager.world.drawSprites = this.checked;
 		}
 		//runtime script
 		this.gameviewProperties[6].onclick = function(){

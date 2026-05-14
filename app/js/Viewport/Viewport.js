@@ -89,11 +89,13 @@ Viewport.prototype.onKeyDown = function(e){
 	
 	// change body type 'shift + t'
 	if (e.which == 84 && inpH.SHIFT_PRESSED){
-		for(i = 0; i < sceneManager.selectedBodies.length; i++){
-			t = sceneManager.selectedBodies[i].bodyType;
-				 if(t == 0) sceneManager.selectedBodies[i].bodyType = 1;
-			else if(t == 1) sceneManager.selectedBodies[i].bodyType = 2;
-			else if(t == 2) sceneManager.selectedBodies[i].bodyType = 0;
+		for(var i = 0; i < sceneManager.selectedBodies.length; i++){
+			var body = sceneManager.selectedBodies[i];
+			if(!body) continue;
+			var t = body.bodyType;
+				 if(t == 0) body.bodyType = 1;
+			else if(t == 1) body.bodyType = 2;
+			else if(t == 2) body.bodyType = 0;
 		}
 	}
 	
@@ -149,12 +151,17 @@ Viewport.prototype.onKeyUp = function(e){
 	else if (e.which == 70){		// f - key pressed => align view to selection
 		if (this.inputHandler.selection[0] instanceof Vertex){
 			var pivot = [0, 0];
+			var count = 0;
 			for (var i = 0; i < this.inputHandler.selection.length; i++){
-				pivot[0] += this.inputHandler.selection[i].x;
-				pivot[1] += this.inputHandler.selection[i].y;
+				var item = this.inputHandler.selection[i];
+				if(item) {
+					pivot[0] += item.x;
+					pivot[1] += item.y;
+					count++;
+				}
 			}
-			pivot[0] /= Math.max(this.inputHandler.selection.length, 1);
-			pivot[1] /= Math.max(this.inputHandler.selection.length, 1);
+			pivot[0] /= Math.max(count, 1);
+			pivot[1] /= Math.max(count, 1);
 			this.navigator.panning = 
 				[
 					this.canvas.width / (this.navigator.scale * 2) - pivot[0] + this.navigator.origin[0],
@@ -163,12 +170,17 @@ Viewport.prototype.onKeyUp = function(e){
 		}
 		else {
 			var pivot = [0, 0];
+			var count = 0;
 			for (var i = 0; i < this.inputHandler.selection.length; i++){
-				pivot[0] += this.inputHandler.selection[i].position[0];
-				pivot[1] += this.inputHandler.selection[i].position[1];
+				var item = this.inputHandler.selection[i];
+				if(item && item.position) {
+					pivot[0] += item.position[0];
+					pivot[1] += item.position[1];
+					count++;
+				}
 			}
-			pivot[0] /= Math.max(this.inputHandler.selection.length, 1);
-			pivot[1] /= Math.max(this.inputHandler.selection.length, 1);
+			pivot[0] /= Math.max(count, 1);
+			pivot[1] /= Math.max(count, 1);
 			this.navigator.panning = 
 				[
 					this.canvas.width / (this.navigator.scale * 2) - pivot[0] + this.navigator.origin[0],
@@ -241,15 +253,15 @@ Viewport.prototype.onMouseDown = function(e){
 			inputHandler.selection = [];
 			//bodies
 			for (var i = 0; i < this.sceneManager.selectedBodies.length; i++){
-				inputHandler.selection.push(this.sceneManager.selectedBodies[i]);
+				if(this.sceneManager.selectedBodies[i]) inputHandler.selection.push(this.sceneManager.selectedBodies[i]);
 			}
 			//joints
 			for (var i = 0; i < this.sceneManager.selectedJoints.length; i++){
-				inputHandler.selection.push(this.sceneManager.selectedJoints[i]);
+				if(this.sceneManager.selectedJoints[i]) inputHandler.selection.push(this.sceneManager.selectedJoints[i]);
 			}
 			//particles
 			for (var i = 0; i < this.sceneManager.selectedParticles.length; i++){
-				inputHandler.selection.push(this.sceneManager.selectedParticles[i]);
+				if(this.sceneManager.selectedParticles[i]) inputHandler.selection.push(this.sceneManager.selectedParticles[i]);
 			}
 
 		}
@@ -355,122 +367,142 @@ Viewport.prototype.onMouseUp = function(e){
 			}
 			// bodies
 			for (var i = 0; i < sceneManager.bodies.length; i++){
-				if (lineSegment.checkInBoundsAABB(sceneManager.bodies[i].bounds)){
-					if (sceneManager.selectedBodies.indexOf(sceneManager.bodies[i]) < 0){
-						sceneManager.selectedBodies.push(sceneManager.bodies[i]);
+				var body = sceneManager.bodies[i];
+				if(!body) continue;
+				if (lineSegment.checkInBoundsAABB(body.bounds)){
+					if (sceneManager.selectedBodies.indexOf(body) < 0){
+						sceneManager.selectedBodies.push(body);
 						}
-					sceneManager.bodies[i].isSelected = true;
+					body.isSelected = true;
 				}
 				else {
 					if (!inputHandler.SHIFT_PRESSED){
-						sceneManager.bodies[i].isSelected = false;
+						body.isSelected = false;
 					}
 				}
 			}
 			// joints
 			for (var i = 0; i < sceneManager.joints.length; i++){
-				var bounds = sceneManager.joints[i].getBounds();
-				if (lineSegment.checkInBoundsAABB( [bounds[0], bounds[1], bounds[2] / scale, bounds[3] / scale] )){
-					if (sceneManager.selectedJoints.indexOf(sceneManager.joints[i]) < 0){
-						sceneManager.selectedJoints.push(sceneManager.joints[i]);
+				var joint = sceneManager.joints[i];
+				if(!joint) continue;
+				var bounds = joint.getBounds();
+				if (bounds && lineSegment.checkInBoundsAABB( [bounds[0], bounds[1], bounds[2] / scale, bounds[3] / scale] )){
+					if (sceneManager.selectedJoints.indexOf(joint) < 0){
+						sceneManager.selectedJoints.push(joint);
 					}
-					sceneManager.joints[i].isSelected = true;
+					joint.isSelected = true;
 				}
 				else {
 					if (!inputHandler.SHIFT_PRESSED){
-						sceneManager.joints[i].isSelected = false;
+						joint.isSelected = false;
 					}
 				}
 			}
 			//particles
 			for (var i = 0; i < sceneManager.particles.length; i++){
-				if (lineSegment.checkInBoundsAABB(sceneManager.particles[i].bounds)){
-					if (sceneManager.selectedParticles.indexOf(sceneManager.particles[i]) < 0){
-						sceneManager.selectedParticles.push(sceneManager.particles[i]);
+				var p = sceneManager.particles[i];
+				if(!p) continue;
+				if (lineSegment.checkInBoundsAABB(p.bounds)){
+					if (sceneManager.selectedParticles.indexOf(p) < 0){
+						sceneManager.selectedParticles.push(p);
 					}
-					sceneManager.particles[i].isSelected = true;
+					p.isSelected = true;
 				}
 				else {
 					if (!inputHandler.SHIFT_PRESSED){
-						sceneManager.particles[i].isSelected = false;
+						p.isSelected = false;
 					}
 				}
 			}
 		}
-		else if (sceneManager.state == sceneManager.STATE_BODY_EDIT_MODE){
+		else if (sceneManager.state == sceneManager.STATE_BODY_EDIT_MODE && sceneManager.selectedBodies[0]){
 			if (!inputHandler.SHIFT_PRESSED){
 				sceneManager.selectedShapes = [];
 			}
-			for (var i = 0; i < sceneManager.selectedBodies[0].shapes.length; i++){
-				
-				if (lineSegment.checkInBoundsAABB(sceneManager.selectedBodies[0].shapes[i].bounds)){
-					if (sceneManager.selectedShapes.indexOf(sceneManager.selectedBodies[0].shapes[i]) < 0){
-						sceneManager.selectedShapes.push(sceneManager.selectedBodies[0].shapes[i]);
+			var shapes = sceneManager.selectedBodies[0].shapes;
+			if(shapes){
+				for (var i = 0; i < shapes.length; i++){
+					var shape = shapes[i];
+					if(!shape) continue;
+					if (lineSegment.checkInBoundsAABB(shape.bounds)){
+						if (sceneManager.selectedShapes.indexOf(shape) < 0){
+							sceneManager.selectedShapes.push(shape);
+						}
+						shape.isSelected = true;
 					}
-					sceneManager.selectedBodies[0].shapes[i].isSelected = true;
-				}
-				else {
-					if (!inputHandler.SHIFT_PRESSED){
-						sceneManager.selectedBodies[0].shapes[i].isSelected = false;
+					else {
+						if (!inputHandler.SHIFT_PRESSED){
+							shape.isSelected = false;
+						}
 					}
 				}
 			}
 		}
-		else if (sceneManager.state == sceneManager.STATE_SHAPE_EDIT_MODE){
+		else if (sceneManager.state == sceneManager.STATE_SHAPE_EDIT_MODE && sceneManager.selectedShapes[0]){
 			if (!inputHandler.SHIFT_PRESSED){
 				sceneManager.selectedVertices = [];
 			}
-			for (var i = 0; i < sceneManager.selectedShapes[0].vertices.length; i++){
-				var vertex = sceneManager.selectedShapes[0].vertices[i];
-				if (lineSegment.checkInBoundsAABB([vertex.x, vertex.y, vertex.width, vertex.height])){
-					if (sceneManager.selectedVertices.indexOf(sceneManager.selectedShapes[0].vertices[i]) < 0){
-						sceneManager.selectedVertices.push(sceneManager.selectedShapes[0].vertices[i]);
+			var vertices = sceneManager.selectedShapes[0].vertices;
+			if(vertices){
+				for (var i = 0; i < vertices.length; i++){
+					var vertex = vertices[i];
+					if(!vertex) continue;
+					if (lineSegment.checkInBoundsAABB([vertex.x, vertex.y, vertex.width, vertex.height])){
+						if (sceneManager.selectedVertices.indexOf(vertex) < 0){
+							sceneManager.selectedVertices.push(vertex);
+						}
+						vertex.isSelected = true;
 					}
-					sceneManager.selectedShapes[0].vertices[i].isSelected = true;
-				}
-				else{
-					if (!inputHandler.SHIFT_PRESSED){
-						sceneManager.selectedShapes[0].vertices[i].isSelected = false;	
+					else{
+						if (!inputHandler.SHIFT_PRESSED){
+							vertex.isSelected = false;	
+						}
 					}
 				}
 			}
 		}
-		else if (sceneManager.state == sceneManager.STATE_IMAGE_VERTEX_EDIT_MODE && sceneManager.selectedBodies[0].sprites.length > 0){
+		else if (sceneManager.state == sceneManager.STATE_IMAGE_VERTEX_EDIT_MODE && sceneManager.selectedBodies[0] && sceneManager.selectedBodies[0].sprites.length > 0){
 			if (!inputHandler.SHIFT_PRESSED){
 				sceneManager.selectedVertices = [];
 			}
 			var sprite = sceneManager.selectedBodies[0].sprites[sceneManager.selectedBodies[0].selectedSprite];
-			for (var i = 0; i < sprite.vertices.length; i++){
-				var vertex = sprite.vertices[i];
-				if (lineSegment.checkInBoundsAABB([vertex.x, vertex.y, vertex.width, vertex.height])){
-					if (sceneManager.selectedVertices.indexOf(sprite.vertices[i]) < 0){
-						sceneManager.selectedVertices.push(sprite.vertices[i]);
+			if(sprite && sprite.vertices){
+				for (var i = 0; i < sprite.vertices.length; i++){
+					var vertex = sprite.vertices[i];
+					if(!vertex) continue;
+					if (lineSegment.checkInBoundsAABB([vertex.x, vertex.y, vertex.width, vertex.height])){
+						if (sceneManager.selectedVertices.indexOf(vertex) < 0){
+							sceneManager.selectedVertices.push(vertex);
+						}
+						vertex.isSelected = true;
 					}
-					sprite.vertices[i].isSelected = true;
-				}
-				else{
-					if (!inputHandler.SHIFT_PRESSED){
-						sprite.vertices[i].isSelected = false;	
+					else{
+						if (!inputHandler.SHIFT_PRESSED){
+							vertex.isSelected = false;	
+						}
 					}
 				}
 			}
 		}
-		else if (sceneManager.state == sceneManager.STATE_PARTICLE_EDIT_MODE && sceneManager.selectedParticles[0].shape.type == 2){
+		else if (sceneManager.state == sceneManager.STATE_PARTICLE_EDIT_MODE && sceneManager.selectedParticles[0] && sceneManager.selectedParticles[0].shape && sceneManager.selectedParticles[0].shape.type == 2){
 			if (!inputHandler.SHIFT_PRESSED){
 				sceneManager.selectedVertices = [];
 			}
 			var shape = sceneManager.selectedParticles[0].shape;
-			for (var i = 0; i < shape.vertices.length; i++){
-				var vertex = shape.vertices[i];
-				if (lineSegment.checkInBoundsAABB([vertex.x, vertex.y, vertex.width, vertex.height])){
-					if (sceneManager.selectedVertices.indexOf(shape.vertices[i]) < 0){
-						sceneManager.selectedVertices.push(shape.vertices[i]);
+			if(shape && shape.vertices){
+				for (var i = 0; i < shape.vertices.length; i++){
+					var vertex = shape.vertices[i];
+					if(!vertex) continue;
+					if (lineSegment.checkInBoundsAABB([vertex.x, vertex.y, vertex.width, vertex.height])){
+						if (sceneManager.selectedVertices.indexOf(vertex) < 0){
+							sceneManager.selectedVertices.push(vertex);
+						}
+						vertex.isSelected = true;
 					}
-					shape.vertices[i].isSelected = true;
-				}
-				else{
-					if (!inputHandler.SHIFT_PRESSED){
-						shape.vertices[i].isSelected = false;	
+					else{
+						if (!inputHandler.SHIFT_PRESSED){
+							vertex.isSelected = false;	
+						}
 					}
 				}
 			}
@@ -499,15 +531,15 @@ Viewport.prototype.onMouseUp = function(e){
 			inputHandler.selection = [];
 			//bodies
 			for (var i = 0; i < this.sceneManager.selectedBodies.length; i++){
-				inputHandler.selection.push(this.sceneManager.selectedBodies[i]);
+				if(this.sceneManager.selectedBodies[i]) inputHandler.selection.push(this.sceneManager.selectedBodies[i]);
 			}
 			//joints
 			for (var i = 0; i < this.sceneManager.selectedJoints.length; i++){
-				inputHandler.selection.push(this.sceneManager.selectedJoints[i]);
+				if(this.sceneManager.selectedJoints[i]) inputHandler.selection.push(this.sceneManager.selectedJoints[i]);
 			}
 			//particles
 			for (var i = 0; i < this.sceneManager.selectedParticles.length; i++){
-				inputHandler.selection.push(this.sceneManager.selectedParticles[i]);
+				if(this.sceneManager.selectedParticles[i]) inputHandler.selection.push(this.sceneManager.selectedParticles[i]);
 			}
 		}
 		else if (sceneManager.state == sceneManager.STATE_BODY_EDIT_MODE){
@@ -687,70 +719,101 @@ Viewport.prototype.draw = function(gameView){
 	
 		// rendering the images
 		for (var i = 0; i < sceneManager.bodies.length; i++){
-			var body = sceneManager.bodies[i];
-			for (var j = 0; j < body.sprites.length; j++){
-			    var s = body.sprites[j];
-				if(s.hasLoaded){
-					this.renderer.renderImage(s, body);
+			try {
+				var body = sceneManager.bodies[i];
+				if(!body) continue;
+				for (var j = 0; j < body.sprites.length; j++){
+					var s = body.sprites[j];
+					if(s && s.hasLoaded){
+						this.renderer.renderImage(s, body);
+					}
 				}
+			} catch(e) {
+				console.error("Failed to render image for body at index " + i, e);
 			}
 		}
 		
 		// rendering the bodies
 		for (var i = 0; i < sceneManager.bodies.length; i++){
-			renderer.renderBody(sceneManager.bodies[i], i);
+			try {
+				if(sceneManager.bodies[i]) {
+					renderer.renderBody(sceneManager.bodies[i], i);
+				}
+			} catch(e) {
+				console.error("Failed to render body at index " + i, e);
+			}
 		}
 		
 		// rendering the particles
 		for (var i = 0; i < sceneManager.particles.length; i++){
-			renderer.renderParticles(sceneManager.particles[i]);
+			try {
+				if(sceneManager.particles[i]) {
+					renderer.renderParticles(sceneManager.particles[i]);
+				}
+			} catch(e) {
+				console.error("Failed to render particle at index " + i, e);
+			}
 		}
 		
 		// rendering the joints
 		for (var i = 0; i < sceneManager.joints.length; i++){
-			renderer.renderJoint(sceneManager.joints[i], navigator);
+			try {
+				if(sceneManager.joints[i]) {
+					renderer.renderJoint(sceneManager.joints[i], navigator);
+				}
+			} catch(e) {
+				console.error("Failed to render joint at index " + i, e);
+			}
 		}
 		
 		if(sceneManager.state == sceneManager.STATE_LOCK_MODE && renderer.DEBUG){
-			var x = inputHandler.lastRightMouseClickPos[0];
-			var y = inputHandler.lastRightMouseClickPos[1];
-			renderer.getContext().lineWidth = 1  / renderer.scale;
-			renderer.getContext().strokeStyle = '#0f0';
-			renderer.getContext().beginPath();
-			renderer.getContext().moveTo(x, 0);
-			renderer.getContext().lineTo(x, y);
-			renderer.getContext().stroke();
-			renderer.getContext().strokeStyle = '#f00';
-			renderer.getContext().beginPath();
-			renderer.getContext().moveTo(0, y);
-			renderer.getContext().lineTo(x, y);
-			renderer.getContext().stroke();	
-			renderer.centroid(x, y, 12 / renderer.scale);
+			try {
+				var x = inputHandler.lastRightMouseClickPos[0];
+				var y = inputHandler.lastRightMouseClickPos[1];
+				renderer.getContext().lineWidth = 1  / renderer.scale;
+				renderer.getContext().strokeStyle = '#0f0';
+				renderer.getContext().beginPath();
+				renderer.getContext().moveTo(x, 0);
+				renderer.getContext().lineTo(x, y);
+				renderer.getContext().stroke();
+				renderer.getContext().strokeStyle = '#f00';
+				renderer.getContext().beginPath();
+				renderer.getContext().moveTo(0, y);
+				renderer.getContext().lineTo(x, y);
+				renderer.getContext().stroke();	
+				renderer.centroid(x, y, 12 / renderer.scale);
+			} catch(e) {}
 		}
 			
 
 		// draw selection area if active
 		if(sceneManager.state != sceneManager.STATE_IMAGE_EDIT_MODE){
 			if (inputHandler.selectionArea[4]){
-				var position = this.screenPointToWorld(inputHandler.selectionArea[0], inputHandler.selectionArea[1]),
-					width = inputHandler.selectionArea[2] / navigator.scale,
-					height = inputHandler.selectionArea[3] / navigator.scale;
-				
-				renderer.getContext().globalAlpha = 1;
-				renderer.getContext().lineWidth = 0.25 / scale;
-				renderer.setLineDash(2.5 / scale, 2.5 / scale);
-				renderer.getContext().strokeStyle = "#ffffff";
-				renderer.getContext().fillStyle = "#ffffff10";
-				renderer.renderBox(position[0] + width / 2, position[1] + height / 2, width, height, false);
-				renderer.renderBox(position[0] + width / 2, position[1] + height / 2, width, height, true);
-				renderer.getContext().strokeStyle = "#f00";
-				renderer.setLineDash(0, 0);
+				try {
+					var position = this.screenPointToWorld(inputHandler.selectionArea[0], inputHandler.selectionArea[1]),
+						width = inputHandler.selectionArea[2] / navigator.scale,
+						height = inputHandler.selectionArea[3] / navigator.scale;
+					
+					renderer.getContext().globalAlpha = 1;
+					renderer.getContext().lineWidth = 0.25 / scale;
+					renderer.setLineDash(2.5 / scale, 2.5 / scale);
+					renderer.getContext().strokeStyle = "#ffffff";
+					renderer.getContext().fillStyle = "#ffffff10";
+					renderer.renderBox(position[0] + width / 2, position[1] + height / 2, width, height, false);
+					renderer.renderBox(position[0] + width / 2, position[1] + height / 2, width, height, true);
+					renderer.getContext().strokeStyle = "#f00";
+					renderer.setLineDash(0, 0);
+				} catch(e) {}
 			}
 		}
 	}
 	else {
-		if (gameView && gameView.hasLoaded){
-			gameView.updateView();
+		try {
+			if (gameView && gameView.hasLoaded){
+				gameView.updateView();
+			}
+		} catch(e) {
+			console.error("Failed to update game view", e);
 		}
 	}
 

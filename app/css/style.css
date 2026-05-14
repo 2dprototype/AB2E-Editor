@@ -657,27 +657,45 @@ table tbody td span {
 .tab-bar {
 	display: flex;
 	background-color: #181a1f;
-	height: 35px;
+	height: 23px;
 	width: 100%;
 	border-bottom: 1px solid #000;
 	user-select: none;
     z-index: 1000;
 	box-sizing: border-box;
+    overflow-x: auto;
+}
+
+.tab-bar::-webkit-scrollbar {
+	/* width: 8px; */
+	height: 4px;
+}
+
+.tab-bar::-webkit-scrollbar-thumb {
+	background: #ffffff25;
+}
+
+.tab-bar::-webkit-scrollbar-thumb:hover {
+	background: #ffffff30;
+}
+
+.tab-bar::-webkit-scrollbar-thumb:active {
+	background: #ffffff35;
 }
 
 .tab {
-	display: flex;
-	align-items: center;
-	padding: 0 15px;
-	color: #9da5b4;
-	background-color: #21252b;
-	border-right: 1px solid #181a1f;
-	cursor: pointer;
-	font-size: 11px;
-	min-width: 120px;
-	max-width: 200px;
-	position: relative;
-	transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    padding: 0 5px;
+    color: #9da5b4;
+    background-color: #21252b;
+    border-right: 1px solid #181a1f;
+    cursor: pointer;
+    font-size: 11px;
+    min-width: 50px;
+    max-width: 95px;
+    position: relative;
+    transition: background-color 0.2s;
 }
 
 .tab.active {
@@ -698,12 +716,11 @@ table tbody td span {
 }
 
 .close-tab {
-	font-style: normal;
-	font-size: 14px;
-	opacity: 0.3;
-	margin-left: auto;
-	padding: 2px 5px;
-	border-radius: 3px;
+    font-style: normal;
+    font-size: 14px;
+    opacity: 0.3;
+    margin-left: auto;
+    border-radius: 3px;
 }
 
 .close-tab:hover {
@@ -713,8 +730,9 @@ table tbody td span {
 }
 
 .add-tab {
-	min-width: 40px;
-	justify-content: center;
-	font-size: 18px;
-	color: #fff;
+    min-width: 30px;
+    justify-content: center;
+    font-size: 15px;
+    color: #fff;
+    padding: 0;
 }

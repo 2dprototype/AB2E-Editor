@@ -273,7 +273,7 @@ Viewport.prototype.onMouseDown = function(e){
 		}
 	}
 	
-	// Editor.on_file_changed();
+	// Editor.onFileChange();
 };
 
 Viewport.prototype.onMouseMove = function(e){
@@ -554,7 +554,7 @@ Viewport.prototype.onMouseUp = function(e){
 	}
 
 	inputHandler.selectionArea = [0, 0, 0, 0, 0];
-	Editor.on_file_changed();
+	Editor.onFileChange();
 };
 
 // viewport scaling

@@ -122,11 +122,11 @@ var App = function(){
 App.prototype.newProject = function(sceneManager, type = 'scene', filePath = '', content = ''){
 	var project = new Project(this, sceneManager, type, content);
 	if(filePath){
-		project.currentFile.path = filepath = filePath;
-		project.currentFile.name = path.basename(filepath);
-		project.currentFile.dir = path.dirname(filepath);
-		project.currentFile.nameonly = path.parse(path.basename(filepath)).name;
-		project.currentFile.ext = path.extname(filepath);
+		project.currentFile.path = filePath;
+		project.currentFile.name = path.basename(filePath);
+		project.currentFile.dir = path.dirname(filePath);
+		project.currentFile.nameonly = path.parse(path.basename(filePath)).name;
+		project.currentFile.ext = path.extname(filePath);
 	}
 	project.lastSavedHash = type === 'scene' ? this.getSceneHash(project) : this.getTextHash(content);
 	project.isDirty = false;
@@ -334,7 +334,7 @@ App.prototype.loadSceneFromFile = function(filepath){
 			this.UIManager.propertiesMenu.updateSceneCollection();
 			this.UIManager.propertiesMenu.updateSelectionProperty();
 			this.UIManager.toolbar.update_favourite_button();
-			this.on_file_changed();
+			this.onFileChange();
 		}
 	}
 }
@@ -577,7 +577,15 @@ App.prototype.setCurrentFile = function(filepath){
 	this.currentFile.ext = path.extname(filepath);
 	
 	var project = this.projects[this.activeProjectIndex];
-	project.lastSavedHash = this.getSceneHash(project);
+	if(project.type === 'scene') {
+		project.lastSavedHash = this.getSceneHash(project);
+	} else {
+		var content = project.textContent;
+		if(this.UIManager && this.UIManager.codeEditor) {
+			content = this.UIManager.codeEditor.getValue();
+		}
+		project.lastSavedHash = this.getTextHash(content);
+	}
 	project.isDirty = false;
 	
 	this.updateTitle();
@@ -710,19 +718,9 @@ App.prototype.runScript = function(filepath, type = ".js"){
 		ref.terminal.show();
 	}
 };
-App.prototype.stableStringify = function(obj){
-	var allKeys = [];
-	JSON.stringify(obj, function(key, value) {
-		allKeys.push(key);
-		return value;
-	});
-	allKeys.sort();
-	return JSON.stringify(obj, allKeys);
-}
-
 App.prototype.getSceneHash = function(project){
-	var sceneData = project.sceneManager.saveScene();
-	return create_hash_sha1(this.stableStringify(sceneData));
+	var data = project.sceneManager.getSceneData();
+	return crypto.createHash('md5').update(this.stableStringify(data)).digest('hex')
 }
 
 App.prototype.updateTitle = function(){
@@ -744,24 +742,44 @@ App.prototype.updateTitle = function(){
 	document.title = title;
 }
 
-App.prototype.is_current_file_saved = function(){
+App.prototype.isCurrentFileSaved = function(){
 	var project = this.projects[this.activeProjectIndex];
-	if(project.currentFile.path != '' && fs.existsSync(project.currentFile.path)){
-		var currentHash = this.getSceneHash(project);
-		if(project.lastSavedHash == currentHash) return true
-		else return false	    
+	if(!project) return true;
+
+	var currentHash = '';
+	if(project.type === 'scene'){
+		currentHash = this.getSceneHash(project);
 	}
-	else{
-	    return false
+	else {
+		var content = project.textContent;
+		if(this.UIManager && this.UIManager.codeEditor && this.activeProjectIndex === this.projects.indexOf(project)) {
+			content = this.UIManager.codeEditor.getValue();
+		}
+		currentHash = this.getTextHash(content);
 	}
+
+	return project.lastSavedHash === currentHash;
 }
 
-App.prototype.on_file_changed = function(){
+App.prototype.onFileChange = function(){
 	var project = this.projects[this.activeProjectIndex];
 	if(!project) return;
 	
-	var currentHash = this.getSceneHash(project);
-	if(project.currentFile.path != '' && project.lastSavedHash == currentHash){
+	var currentHash = '';
+	if(project.type === 'scene'){
+		currentHash = this.getSceneHash(project);
+	} 
+	else {
+		var content = project.textContent;
+		if(this.UIManager && this.UIManager.codeEditor && this.activeProjectIndex === this.projects.indexOf(project)) {
+			content = this.UIManager.codeEditor.getValue();
+		}
+		currentHash = this.getTextHash(content);
+	}
+
+	console.log(project.lastSavedHash === currentHash, project.lastSavedHash, currentHash)
+
+	if(project.lastSavedHash === currentHash){
 		project.isDirty = false;
 	}
 	else{

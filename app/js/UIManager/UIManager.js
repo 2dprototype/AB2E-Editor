@@ -19,6 +19,16 @@ function UIManager(sceneManager, viewport, canvas, fileExporter){
 	this.codeEditor.setSize("100%", "100%")
 	this.codeEditorBG = document.getElementById("code-editor-bg")
 	this.canvas = canvas;
+
+	var ref = this;
+	this.codeEditor.on("change", function(){
+		if(typeof Editor !== 'undefined' && Editor.onFileChange) {
+			var project = Editor.projects[Editor.activeProjectIndex];
+			if(project && project.type === 'text') {
+				Editor.onFileChange();
+			}
+		}
+	});
 	
 	this.CTRL_PRESSED = 0;
 	this.SHIFT_PRESSED = 0;
@@ -49,6 +59,12 @@ UIManager.prototype.saveTextFile = function(){
 	if(this.currentEditingTextFile){
 		var data = this.codeEditor.getValue();
 		fs.writeFileSync(this.currentEditingTextFile, data, 'utf8');
+		var project = Editor.projects[Editor.activeProjectIndex];
+		if(project) {
+			project.lastSavedHash = Editor.getTextHash(data);
+			project.textContent = data;
+		}
+		Editor.onFileChange();
 	}
 }
 
@@ -488,8 +504,14 @@ UIManager.prototype.saveScene = function(){
 	var ref = this;
 	var data = ref.sceneManager.getSceneData();
 	if(Editor.currentFile.path == '') ref.saveSceneAs(data);
-	else fs.writeFileSync(Editor.currentFile.path, JSON.stringify(data, null, 4));
-	Editor.on_file_changed();
+	else {
+		fs.writeFileSync(Editor.currentFile.path, JSON.stringify(data, null, 4));
+		var project = Editor.projects[Editor.activeProjectIndex];
+		if(project) {
+			project.lastSavedHash = Editor.getSceneHash(project);
+		}
+	}
+	Editor.onFileChange();
 }
 
 
@@ -587,7 +609,7 @@ UIManager.prototype.saveSceneAs = function(data){
 		ref.sceneManager.cloneImages(Editor.currentFile.dir, olddir);
 		
 	}
-	Editor.on_file_changed();
+	Editor.onFileChange();
 }
 
 
@@ -767,13 +789,7 @@ UIManager.prototype.init = function(){
 
 
 UIManager.prototype.checkFileSaved = function(){
-	if(Editor.currentFile.path != ""){
-		var data = fs.readFileSync(Editor.currentFile.path, 'utf8');
-		return data == this.stringify(this.sceneManager.getSceneData(), null, 4);
-	}
-	else{
-		return false
-	}
+	return Editor.isCurrentFileSaved();
 }
 
 UIManager.prototype.openFile = function(options = {}){

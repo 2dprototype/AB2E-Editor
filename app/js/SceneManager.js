@@ -85,8 +85,8 @@ SceneManager.prototype.setSceneInfo = function(obj){
 SceneManager.prototype.recordHistory = function(){
 	if(this.history && !this.history.isRestoring){
 		this.history.addHistory();
-		if (typeof Editor !== 'undefined' && Editor.on_file_changed) {
-			Editor.on_file_changed();
+		if (typeof Editor !== 'undefined' && Editor.onFileChange) {
+			Editor.onFileChange();
 		}
 	}
 }

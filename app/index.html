@@ -208,15 +208,21 @@
 		<div id="bottom-panel">
 			<div id="bottom-resizer" class="resizer vertical"></div>
 			<div class="header">
-				<div class="tabs">
-					<div class="tab active">Terminal</div>
-					<div class="tab">Output</div>
+				<div class="tabs" id="terminal-tabs">
+					<div class="tab active" data-tab="terminal">Terminal</div>
+					<div class="tab" data-tab="output">Output</div>
+					<div class="tab" data-tab="console">Console</div>
 				</div>
 				<div class="controls">
+					<button id="terminal-clear-btn" title="Clear"><i class="bi bi-trash"></i></button>
 					<button id="terminal-close-btn">×</button>
 				</div>
 			</div>
-			<div id="terminal-container"></div>
+			<div id="terminal-container">
+				<div id="tab-terminal" class="terminal-tab-content"></div>
+				<div id="tab-output" class="terminal-tab-content" style="display:none;"></div>
+				<div id="tab-console" class="terminal-tab-content" style="display:none;"></div>
+			</div>
 		</div>
 		<div id="section_property">
 			<div class="head">

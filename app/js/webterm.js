@@ -132,7 +132,7 @@ class WebTerm {
 	    this.element.style.width = "100%"
         this.element.style.height = "100%"
         this.element.style.backgroundColor = "#101010"
-        this.element.style.position = "absolute"
+        this.element.style.position = "relative"
         this.element.style.color = "#eeeeee"
         this.element.style.fontFamily = '"Roboto Mono", monospace'
         this.element.style.overflowY = "auto"
@@ -170,7 +170,17 @@ class WebTerm {
 	}	
 	setBackgroundColor(color) {
 	   this.element.style.backgroundColor = color
-	}	
+	}
+	
+	hideInput() {
+		this.writer.style.display = 'none';
+		this._writer.style.display = 'none';
+	}
+	
+	showInput() {
+		this.writer.style.display = 'inline';
+		this._writer.style.display = 'inline';
+	}
 	setSize(width, height) {
 	    this.element.style.width = width
         this.element.style.height = height

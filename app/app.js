@@ -82,15 +82,35 @@ var App = function(){
 	this.clipboard = null;
 
 	this.custom_execute = '';
-	this.terminal = new WebTerm(document.getElementById('terminal-container'));
+	
+	this.terminal = new WebTerm(document.getElementById('tab-terminal'));
 	this.terminal.setFontSize("12px");
 	this.terminal.setBackgroundColor("#181a1f");
 	this.terminal.setColor("#abb2bf");
-	this.terminal.element.style.position = 'relative';
+	
+	this.output = new WebTerm(document.getElementById('tab-output'));
+	this.output.setFontSize("12px");
+	this.output.setBackgroundColor("#181a1f");
+	this.output.setColor("#abb2bf");
+	this.output.hideInput();
+	
+	this.consoleTerm = new WebTerm(document.getElementById('tab-console'));
+	this.consoleTerm.setFontSize("12px");
+	this.consoleTerm.setBackgroundColor("#181a1f");
+	this.consoleTerm.setColor("#abb2bf");
+	this.consoleTerm.hideInput();
+	
+	this.activeTerminalTab = 'terminal';
 	
 	// Compatibility methods
 	this.terminal.println = function(msg) { this.writeln(msg); }
 	this.terminal.error = function(msg) { this.writeln(`\u001b[31m${msg}\u001b[0m`); }
+	
+	this.output.println = function(msg) { this.writeln(msg); }
+	this.output.error = function(msg) { this.writeln(`\u001b[31m${msg}\u001b[0m`); }
+	
+	this.consoleTerm.println = function(msg) { this.writeln(msg); }
+	this.consoleTerm.error = function(msg) { this.writeln(`\u001b[31m${msg}\u001b[0m`); }
 	
 	// Close button
 	document.getElementById('terminal-close-btn').onclick = function() {
@@ -384,6 +404,49 @@ App.prototype.init = function(){
 	var ref = this;
 	this.initShell();
 	
+	// Terminal Tab Switching
+	const terminalTabs = document.querySelectorAll('#terminal-tabs .tab');
+	terminalTabs.forEach(tab => {
+		tab.onclick = () => {
+			terminalTabs.forEach(t => t.classList.remove('active'));
+			tab.classList.add('active');
+			const tabName = tab.getAttribute('data-tab');
+			document.querySelectorAll('.terminal-tab-content').forEach(c => c.style.display = 'none');
+			document.getElementById(`tab-${tabName}`).style.display = 'block';
+			ref.activeTerminalTab = tabName;
+			
+			// Refocus terminal input if switching to terminal tab
+			if(tabName === 'terminal' && !ref.UIManager.isTerminalHidden) {
+				ref.terminal._writer.focus();
+			}
+		};
+	});
+
+	// Clear Button
+	document.getElementById('terminal-clear-btn').onclick = () => {
+		if(ref.activeTerminalTab === 'terminal') ref.terminal.clear();
+		else if(ref.activeTerminalTab === 'output') ref.output.clear();
+		else if(ref.activeTerminalTab === 'console') ref.consoleTerm.clear();
+	};
+
+	// Console Interception
+	const originalLog = console.log;
+	const originalWarn = console.warn;
+	const originalError = console.error;
+
+	console.log = function(...args) {
+		originalLog.apply(console, args);
+		ref.consoleTerm.writeln(args.map(a => typeof a === 'object' ? JSON.stringify(a) : a).join(' '));
+	};
+	console.warn = function(...args) {
+		originalWarn.apply(console, args);
+		ref.consoleTerm.writeln(`\u001b[93m${args.map(a => typeof a === 'object' ? JSON.stringify(a) : a).join(' ')}\u001b[0m`);
+	};
+	console.error = function(...args) {
+		originalError.apply(console, args);
+		ref.consoleTerm.writeln(`\u001b[91m${args.map(a => typeof a === 'object' ? JSON.stringify(a) : a).join(' ')}\u001b[0m`);
+	};
+	
 	ref.terminal.onwrite = function (input) {
 		if(input == '.clear' || input == '.clr') {
 			ref.terminal.clear();
@@ -546,15 +609,20 @@ App.prototype.run_cmd = function(){
 			fs.writeFileSync(this.custom_execute, 'cd');
 		}
 		var ncmd = cmd.runSync(`"${this.custom_execute}"`);
-		if(ncmd.data != null) this.terminal.println(ncmd.data, "#5cf43680");
+		if(ncmd.data != null) this.output.println(ncmd.data, "#5cf43680");
 		if(ncmd.err != null){
-			this.terminal.error(ncmd.err);
-			this.terminal.show();
+			this.output.error(ncmd.err);
+			this.UIManager.isTerminalHidden = false;
+			this.UIManager.updateLayout();
+			// Switch to output tab if there is an error
+			document.querySelector('[data-tab="output"]').click();
 		}	 
 	}
 	else{
-	    this.terminal.error('No target found to execute.');
-	    this.terminal.show();
+	    this.output.error('No target found to execute.');
+	    this.UIManager.isTerminalHidden = false;
+	    this.UIManager.updateLayout();
+		document.querySelector('[data-tab="output"]').click();
 	}
 }
 
@@ -739,9 +807,11 @@ App.prototype.runScript = function(filepath, type = ".js"){
 	}
 	catch(err) {
 		var err_msg = err.toString();
-		ref.terminal.error(filepath);
-		ref.terminal.error(err_msg);
-		ref.terminal.show();
+		ref.output.error(filepath);
+		ref.output.error(err_msg);
+		ref.UIManager.isTerminalHidden = false;
+		ref.UIManager.updateLayout();
+		document.querySelector('[data-tab="output"]').click();
 	}
 };
 App.prototype.getSceneHash = function(project){

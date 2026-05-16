@@ -837,3 +837,25 @@ table tbody td span {
     color: #5c6370;
     font-size: 11px;
 }
+
+.resizer {
+    position: absolute;
+    width: 4px;
+    height: 100%;
+    cursor: col-resize;
+    z-index: 1001;
+    background: transparent;
+    transition: background 0.2s;
+}
+
+.resizer:hover, .resizer.active {
+    background: #528bff80;
+}
+
+#left-resizer {
+    left: 250px;
+}
+
+#right-resizer {
+    right: 320px;
+}

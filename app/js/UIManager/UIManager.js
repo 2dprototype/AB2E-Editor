@@ -35,6 +35,68 @@ function UIManager(sceneManager, viewport, canvas, fileExporter){
 	this.ALT_PRESSED = 0;
 	this.SPACE_PRESSED = 0;
 	this.currentEditingTextFile = null;
+
+	this.sidebarWidth = parseInt(localStorage.getItem('sidebarWidth')) || 250;
+	this.propertiesWidth = parseInt(localStorage.getItem('propertiesWidth')) || 320;
+	this.initResizers();
+}
+
+
+UIManager.prototype.initResizers = function(){
+	var ref = this;
+	var leftResizer = document.getElementById('left-resizer');
+	var rightResizer = document.getElementById('right-resizer');
+	var isResizingLeft = false;
+	var isResizingRight = false;
+
+	if(leftResizer) {
+		leftResizer.addEventListener('mousedown', function(e){
+			isResizingLeft = true;
+			leftResizer.classList.add('active');
+			document.body.style.cursor = 'col-resize';
+			e.preventDefault();
+		});
+	}
+
+	if(rightResizer) {
+		rightResizer.addEventListener('mousedown', function(e){
+			isResizingRight = true;
+			rightResizer.classList.add('active');
+			document.body.style.cursor = 'col-resize';
+			e.preventDefault();
+		});
+	}
+
+	window.addEventListener('mousemove', function(e){
+		if(isResizingLeft){
+			ref.sidebarWidth = Math.max(100, Math.min(e.clientX, 600));
+			ref.updateLayout();
+		}
+		if(isResizingRight){
+			var width = window.innerWidth - e.clientX;
+			ref.propertiesWidth = Math.max(150, Math.min(width, 800));
+			ref.updateLayout();
+		}
+	});
+
+	window.addEventListener('mouseup', function(e){
+		if(isResizingLeft || isResizingRight){
+			isResizingLeft = false;
+			isResizingRight = false;
+			if(leftResizer) leftResizer.classList.remove('active');
+			if(rightResizer) rightResizer.classList.remove('active');
+			document.body.style.cursor = 'default';
+			
+			localStorage.setItem('sidebarWidth', ref.sidebarWidth);
+			localStorage.setItem('propertiesWidth', ref.propertiesWidth);
+			
+			// Refresh viewport
+			if(ref.viewport) {
+				ref.viewport.getRenderer().setStageWidthHeight(ref.canvas.width, ref.canvas.height);
+				// ref.viewport.resetPanning();
+			}
+		}
+	});
 }
 
 
@@ -317,9 +379,26 @@ UIManager.prototype.updateLayout = function(){
 	var winH = window.innerHeight;
 	
 	var topOffset = toolbar.offsetHeight + tabBarHeight;
-	var leftOffset = this.workspaceMenu.isHidden ? 0 : 250;
-	var rightOffset = this.propertiesMenu.isHidden ? 0 : propertiesMenu.offsetWidth;
+	var leftOffset = this.workspaceMenu.isHidden ? 0 : this.sidebarWidth;
+	var rightOffset = this.propertiesMenu.isHidden ? 0 : this.propertiesWidth;
 	var bottomOffset = this.statusBar.isHidden ? 0 : statusBar.offsetHeight;
+
+	var leftResizer = document.getElementById('left-resizer');
+	var rightResizer = document.getElementById('right-resizer');
+
+	if(leftResizer) {
+		leftResizer.style.display = this.workspaceMenu.isHidden ? 'none' : 'block';
+		leftResizer.style.left = (leftOffset - 2) + 'px';
+		leftResizer.style.top = topOffset + 'px';
+		leftResizer.style.height = (winH - topOffset - bottomOffset) + 'px';
+	}
+
+	if(rightResizer) {
+		rightResizer.style.display = this.propertiesMenu.isHidden ? 'none' : 'block';
+		rightResizer.style.right = (rightOffset - 2) + 'px';
+		rightResizer.style.top = topOffset + 'px';
+		rightResizer.style.height = (winH - topOffset - bottomOffset) + 'px';
+	}
 	
 	// Workspace Menu
 	if(this.workspaceMenu.isHidden){
@@ -342,7 +421,8 @@ UIManager.prototype.updateLayout = function(){
 		this.propertiesMenu.show();
 		this.toolbar.viewButtons[0].style.color = '#00f';
 		propertiesMenu.style.top = topOffset + 'px';
-		propertiesMenu.style.height = (winH - topOffset) + 'px';
+		propertiesMenu.style.width = rightOffset + 'px';
+		propertiesMenu.style.height = (winH - topOffset - bottomOffset) + 'px';
 	}
 	
 	// Status Bar
@@ -364,7 +444,7 @@ UIManager.prototype.updateLayout = function(){
 	canvas.height = winH - topOffset - bottomOffset;
 	
 	viewport.getRenderer().setStageWidthHeight(canvas.width, canvas.height);
-	viewport.resetPanning();
+	// viewport.resetPanning();
 	
 	if(viewport.isHidden){
 		viewport.hide();

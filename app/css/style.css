@@ -881,18 +881,16 @@ table tbody td span {
 }
 
 #bottom-panel .header {
-    height: 35px;
+    height: 20px;
     background: #181a1f;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0 10px;
     border-bottom: 1px solid #21252b;
 }
 
 #bottom-panel .tabs {
     display: flex;
-    gap: 20px;
     height: 100%;
 }
 

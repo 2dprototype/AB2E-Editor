@@ -3,6 +3,7 @@ const path = require('path');
 const os = require('os');
 const crypto = require('crypto');
 const cmd = require('node-cmd');
+const { spawn } = require('child_process');
 
 const { ipcRenderer } = require("electron");
 const CoffeeScript = require('coffeescript');
@@ -81,30 +82,21 @@ var App = function(){
 	this.clipboard = null;
 
 	this.custom_execute = '';
-	this.terminal_mode = 'console';
-	this.terminal = new WebTerm();
-	this.terminal.setSize("80vw", "80vh");
+	this.terminal = new WebTerm(document.getElementById('terminal-container'));
 	this.terminal.setFontSize("12px");
-	this.terminal.setBackgroundColor("#18191d");
-	this.terminal.setColor("#38d95880");
-	this.terminal.element.style.display = 'none';
-	this.terminal.hidden = true;
-	this.terminal.element.style.top = '10vh';
-	this.terminal.element.style.left = '10vw';
-	this.terminal.element.style.fontFamily = 'JetBrainsMono-Regular';
-	this.terminal.element.style.boxShadow = "rgba(0, 0, 0, 0.47) 0px 1px 8px 3px";
-	this.terminal.element.style.zIndex = '1000';
+	this.terminal.setBackgroundColor("#181a1f");
+	this.terminal.setColor("#abb2bf");
+	this.terminal.element.style.position = 'relative';
 	
 	// Compatibility methods
-	this.terminal.show = function() { this.element.style.display = 'block'; this.hidden = false; this._writer.focus(); }
-	this.terminal.hide = function() { this.element.style.display = 'none'; this.hidden = true; }
-	this.terminal.println = function(msg, color) { 
-		if (color) this.writeln(`\u001b[32m${msg}\u001b[0m`); // Using ANSI for color if provided
-		else this.writeln(msg);
-	}
+	this.terminal.println = function(msg) { this.writeln(msg); }
 	this.terminal.error = function(msg) { this.writeln(`\u001b[31m${msg}\u001b[0m`); }
 	
-	document.body.appendChild(this.terminal.element);
+	// Close button
+	document.getElementById('terminal-close-btn').onclick = function() {
+		ref.UIManager.isTerminalHidden = true;
+		ref.UIManager.updateLayout();
+	};
 	
 	this.canvas = document.getElementById("main-canvas");
 	this.viewport = new Viewport(this.canvas, this.sceneManager);
@@ -390,37 +382,20 @@ App.prototype.paste = function(){
 
 App.prototype.init = function(){
 	var ref = this;
+	this.initShell();
+	
 	ref.terminal.onwrite = function (input) {
-		ref.terminal.writeln('$:' + ref.terminal_mode + ' ' + input);
-		if(input == '.clear' || input == '.clr') ref.terminal.clear();
-		else if(input == '.console' || input == '.cs') ref.terminal_mode = 'console'
-		else if(input == '.cmd') ref.terminal_mode = 'cmd'
-		else if(input.length <= 0){}
-		else if(ref.terminal_mode == 'cmd'){
-			var n_cmd = cmd.runSync(input);
-			if(n_cmd.data != null){
-				ref.terminal.println(n_cmd.data);
-			}
-			if(n_cmd.err != null){
-				ref.terminal.error(n_cmd.err);
-			}
+		if(input == '.clear' || input == '.clr') {
+			ref.terminal.clear();
+			return;
 		}
-		else if(ref.terminal_mode == 'console'){
-			try {
-				var e = runIsolated(input, { Editor: ref });
-				var str = JSON.stringify(e, null, 4);
-				// WebTerm doesn't support HTML in writeln easily, so we just print raw JSON
-				ref.terminal.println(str);
-			}
-			catch(err) {
-				ref.terminal.error(err.message);
-			}
+		
+		if(ref.shell) {
+			ref.shell.stdin.write(input + '\n');
 		}
-		ref.terminal.write('$:' + ref.terminal_mode + ' ');
 	};
 	
-	// Initial prompt is handled by WebTerm's UI or we can print it
-	ref.terminal.write('$:' + ref.terminal_mode + ' ');
+
 	
 	
 	// add event listeners to canvas
@@ -553,8 +528,9 @@ App.prototype.init = function(){
 	}
 	//run
 	this.UIManager.toolbar.gameplayButtons[4].onclick = function(){
-		if(ref.terminal.hidden) ref.terminal.show();
-		else ref.terminal.hide();
+		ref.UIManager.isTerminalHidden = !ref.UIManager.isTerminalHidden;
+		ref.UIManager.updateLayout();
+		if(!ref.UIManager.isTerminalHidden) ref.terminal._writer.focus();
 	}
 	
 	function render() {	
@@ -711,6 +687,43 @@ App.prototype.set_config = function(obj){
 	
 	if(UIManager && UIManager.toolbar) UIManager.toolbar.updateModeButtons();
 }
+
+App.prototype.initShell = function() {
+	var ref = this;
+	var workspaceRoot = this.UIManager && this.UIManager.workspaceMenu ? this.UIManager.workspaceMenu.workspaceRoot : '';
+	var cwd = workspaceRoot || process.cwd();
+	
+	if(this.shell) {
+		this.shell.kill();
+	}
+	
+	// Use powershell on windows, bash on others
+	var shellExe = os.platform() === 'win32' ? 'powershell.exe' : 'bash';
+	
+	this.shell = spawn(shellExe, [], {
+		cwd: cwd,
+		env: process.env
+	});
+	
+	this.shell.stdout.on('data', (data) => {
+		ref.terminal.write(data.toString());
+	});
+	
+	this.shell.stderr.on('data', (data) => {
+		ref.terminal.write(`\u001b[31m${data.toString()}\u001b[0m`);
+	});
+	
+	this.shell.on('close', (code) => {
+		ref.terminal.writeln(`\r\n[Process exited with code ${code}]`);
+	});
+};
+
+App.prototype.updateShellDir = function(dirPath) {
+	if(this.shell) {
+		// Just send a cd command to the existing shell
+		this.shell.stdin.write(`cd "${dirPath}"\n`);
+	}
+};
 
 App.prototype.runScript = function(filepath, type = ".js"){
 	var ref = this;

@@ -38,6 +38,8 @@ function UIManager(sceneManager, viewport, canvas, fileExporter){
 
 	this.sidebarWidth = parseInt(localStorage.getItem('sidebarWidth')) || 250;
 	this.propertiesWidth = parseInt(localStorage.getItem('propertiesWidth')) || 320;
+	this.terminalHeight = parseInt(localStorage.getItem('terminalHeight')) || 200;
+	this.isTerminalHidden = true;
 	this.initResizers();
 }
 
@@ -46,10 +48,13 @@ UIManager.prototype.initResizers = function(){
 	var ref = this;
 	var leftResizer = document.getElementById('left-resizer');
 	var rightResizer = document.getElementById('right-resizer');
+	var bottomResizer = document.getElementById('bottom-resizer');
 	var isResizingLeft = false;
 	var isResizingRight = false;
+	var isResizingBottom = false;
 
 	if(leftResizer) {
+		leftResizer.classList.add('horizontal');
 		leftResizer.addEventListener('mousedown', function(e){
 			isResizingLeft = true;
 			leftResizer.classList.add('active');
@@ -59,10 +64,21 @@ UIManager.prototype.initResizers = function(){
 	}
 
 	if(rightResizer) {
+		rightResizer.classList.add('horizontal');
 		rightResizer.addEventListener('mousedown', function(e){
 			isResizingRight = true;
 			rightResizer.classList.add('active');
 			document.body.style.cursor = 'col-resize';
+			e.preventDefault();
+		});
+	}
+
+	if(bottomResizer) {
+		bottomResizer.classList.add('vertical');
+		bottomResizer.addEventListener('mousedown', function(e){
+			isResizingBottom = true;
+			bottomResizer.classList.add('active');
+			document.body.style.cursor = 'row-resize';
 			e.preventDefault();
 		});
 	}
@@ -77,18 +93,28 @@ UIManager.prototype.initResizers = function(){
 			ref.propertiesWidth = Math.max(150, Math.min(width, 800));
 			ref.updateLayout();
 		}
+		if(isResizingBottom){
+			var height = window.innerHeight - e.clientY;
+			// Subtract status bar height if visible
+			var statusBarHeight = ref.statusBar.isHidden ? 0 : 20;
+			ref.terminalHeight = Math.max(100, Math.min(height - statusBarHeight, 600));
+			ref.updateLayout();
+		}
 	});
 
 	window.addEventListener('mouseup', function(e){
-		if(isResizingLeft || isResizingRight){
+		if(isResizingLeft || isResizingRight || isResizingBottom){
 			isResizingLeft = false;
 			isResizingRight = false;
+			isResizingBottom = false;
 			if(leftResizer) leftResizer.classList.remove('active');
 			if(rightResizer) rightResizer.classList.remove('active');
+			if(bottomResizer) bottomResizer.classList.remove('active');
 			document.body.style.cursor = 'default';
 			
 			localStorage.setItem('sidebarWidth', ref.sidebarWidth);
 			localStorage.setItem('propertiesWidth', ref.propertiesWidth);
+			localStorage.setItem('terminalHeight', ref.terminalHeight);
 			
 			// Refresh viewport
 			if(ref.viewport) {
@@ -381,23 +407,41 @@ UIManager.prototype.updateLayout = function(){
 	var topOffset = toolbar.offsetHeight + tabBarHeight;
 	var leftOffset = this.workspaceMenu.isHidden ? 0 : this.sidebarWidth;
 	var rightOffset = this.propertiesMenu.isHidden ? 0 : this.propertiesWidth;
-	var bottomOffset = this.statusBar.isHidden ? 0 : statusBar.offsetHeight;
+	var bottomBarOffset = this.statusBar.isHidden ? 0 : statusBar.offsetHeight;
+	var terminalOffset = this.isTerminalHidden ? 0 : this.terminalHeight;
+	var bottomOffset = bottomBarOffset + terminalOffset;
 
 	var leftResizer = document.getElementById('left-resizer');
 	var rightResizer = document.getElementById('right-resizer');
+	var bottomResizer = document.getElementById('bottom-resizer');
+	var bottomPanel = document.getElementById('bottom-panel');
 
 	if(leftResizer) {
 		leftResizer.style.display = this.workspaceMenu.isHidden ? 'none' : 'block';
 		leftResizer.style.left = (leftOffset - 2) + 'px';
 		leftResizer.style.top = topOffset + 'px';
-		leftResizer.style.height = (winH - topOffset - bottomOffset) + 'px';
+		leftResizer.style.height = (winH - topOffset - bottomBarOffset) + 'px';
 	}
 
 	if(rightResizer) {
 		rightResizer.style.display = this.propertiesMenu.isHidden ? 'none' : 'block';
 		rightResizer.style.right = (rightOffset - 2) + 'px';
 		rightResizer.style.top = topOffset + 'px';
-		rightResizer.style.height = (winH - topOffset - bottomOffset) + 'px';
+		rightResizer.style.height = (winH - topOffset - bottomBarOffset) + 'px';
+	}
+
+	if(bottomPanel) {
+		bottomPanel.style.display = this.isTerminalHidden ? 'none' : 'block';
+		bottomPanel.style.height = this.terminalHeight + 'px';
+		bottomPanel.style.bottom = bottomBarOffset + 'px';
+		bottomPanel.style.left = leftOffset + 'px';
+		bottomPanel.style.width = (winW - leftOffset - rightOffset) + 'px';
+	}
+
+	if(bottomResizer) {
+		bottomResizer.style.display = this.isTerminalHidden ? 'none' : 'block';
+		bottomResizer.style.bottom = (bottomOffset - 2) + 'px';
+		bottomResizer.style.width = (winW - leftOffset - rightOffset) + 'px';
 	}
 	
 	// Workspace Menu
@@ -422,7 +466,7 @@ UIManager.prototype.updateLayout = function(){
 		this.toolbar.viewButtons[0].style.color = '#00f';
 		propertiesMenu.style.top = topOffset + 'px';
 		propertiesMenu.style.width = rightOffset + 'px';
-		propertiesMenu.style.height = (winH - topOffset - bottomOffset) + 'px';
+		propertiesMenu.style.height = (winH - topOffset) + 'px';
 	}
 	
 	// Status Bar

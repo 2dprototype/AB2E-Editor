@@ -82,17 +82,29 @@ var App = function(){
 
 	this.custom_execute = '';
 	this.terminal_mode = 'console';
-	this.terminal = new terminal('terminal');
-	this.terminal.setHeight("80vh");
-	this.terminal.setWidth("80vw");
-	this.terminal.blinkingCursor(true);
-	this.terminal.setInputBackground("#ffffff08");
-	this.terminal.hide();
-	this.terminal.html.style.top = '10vh';
-	this.terminal.html.style.left = '10vw';
-	this.terminal.html.style.fontFamily = 'JetBrainsMono-Regular';
-	this.terminal.html.style.fontSize = '12px';
-	document.body.appendChild(this.terminal.html);
+	this.terminal = new WebTerm();
+	this.terminal.setSize("80vw", "80vh");
+	this.terminal.setFontSize("12px");
+	this.terminal.setBackgroundColor("#18191d");
+	this.terminal.setColor("#38d95880");
+	this.terminal.element.style.display = 'none';
+	this.terminal.hidden = true;
+	this.terminal.element.style.top = '10vh';
+	this.terminal.element.style.left = '10vw';
+	this.terminal.element.style.fontFamily = 'JetBrainsMono-Regular';
+	this.terminal.element.style.boxShadow = "rgba(0, 0, 0, 0.47) 0px 1px 8px 3px";
+	this.terminal.element.style.zIndex = '1000';
+	
+	// Compatibility methods
+	this.terminal.show = function() { this.element.style.display = 'block'; this.hidden = false; this._writer.focus(); }
+	this.terminal.hide = function() { this.element.style.display = 'none'; this.hidden = true; }
+	this.terminal.println = function(msg, color) { 
+		if (color) this.writeln(`\u001b[32m${msg}\u001b[0m`); // Using ANSI for color if provided
+		else this.writeln(msg);
+	}
+	this.terminal.error = function(msg) { this.writeln(`\u001b[31m${msg}\u001b[0m`); }
+	
+	document.body.appendChild(this.terminal.element);
 	
 	this.canvas = document.getElementById("main-canvas");
 	this.viewport = new Viewport(this.canvas, this.sceneManager);
@@ -378,36 +390,37 @@ App.prototype.paste = function(){
 
 App.prototype.init = function(){
 	var ref = this;
-	nextln();
-	function nextln(){
-		ref.terminal.input('$:' + ref.terminal_mode, function (input) {
-			if(input == '.clear' || input == '.clr') ref.terminal.clear();
-			else if(input == '.console' || input == '.cs') ref.terminal_mode = 'console'
-			else if(input == '.cmd') ref.terminal_mode = 'cmd'
-			else if(input.length <= 0){}
-			else if(ref.terminal_mode == 'cmd'){
-				var n_cmd = cmd.runSync(input);
-				if(n_cmd.data != null){
-					ref.terminal.println(n_cmd.data);
-				}
-				if(n_cmd.err != null){
-					ref.terminal.error(n_cmd.err);
-				}
+	ref.terminal.onwrite = function (input) {
+		ref.terminal.writeln('$:' + ref.terminal_mode + ' ' + input);
+		if(input == '.clear' || input == '.clr') ref.terminal.clear();
+		else if(input == '.console' || input == '.cs') ref.terminal_mode = 'console'
+		else if(input == '.cmd') ref.terminal_mode = 'cmd'
+		else if(input.length <= 0){}
+		else if(ref.terminal_mode == 'cmd'){
+			var n_cmd = cmd.runSync(input);
+			if(n_cmd.data != null){
+				ref.terminal.println(n_cmd.data);
 			}
-			else if(ref.terminal_mode == 'console'){
-				try {
-					var e = runIsolated(input, { Editor: ref });
-					var str = JSON.stringify(e, null, 4);
-					var h =  hljs.highlight(str || "undefined", {language: 'json'});
-					ref.terminal.println(`<code><pre>${h.value}</pre></code>`);
-				}
-				catch(err) {
-					ref.terminal.error(err.message);
-				}
+			if(n_cmd.err != null){
+				ref.terminal.error(n_cmd.err);
 			}
-			nextln();
-		});
+		}
+		else if(ref.terminal_mode == 'console'){
+			try {
+				var e = runIsolated(input, { Editor: ref });
+				var str = JSON.stringify(e, null, 4);
+				// WebTerm doesn't support HTML in writeln easily, so we just print raw JSON
+				ref.terminal.println(str);
+			}
+			catch(err) {
+				ref.terminal.error(err.message);
+			}
+		}
+		ref.terminal.write('$:' + ref.terminal_mode + ' ');
 	};
+	
+	// Initial prompt is handled by WebTerm's UI or we can print it
+	ref.terminal.write('$:' + ref.terminal_mode + ' ');
 	
 	
 	// add event listeners to canvas

@@ -762,7 +762,6 @@ table tbody td span {
 	top: 0px;
 	user-select: none;
 	border-right: 1px solid #181a1f;
-    z-index: 101;
     display: none;
 }
 

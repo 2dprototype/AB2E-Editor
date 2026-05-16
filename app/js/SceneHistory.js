@@ -54,6 +54,16 @@ SceneHistory.prototype.restoreState = function(state){
 	// Clear selection as objects are new instances
 	this.sceneManager.clearSelection();
 	this.isRestoring = false;
+
+	// Update UI and dirty state
+	if (typeof Editor !== 'undefined') {
+		if (Editor.onFileChange) Editor.onFileChange();
+		if (Editor.UIManager) {
+			Editor.UIManager.propertiesMenu.updateSceneCollection();
+			Editor.UIManager.propertiesMenu.updateSelectionProperty();
+			Editor.UIManager.statusBar.update();
+		}
+	}
 }
 
 SceneHistory.prototype.clear = function(){

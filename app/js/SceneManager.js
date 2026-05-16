@@ -286,6 +286,9 @@ SceneManager.prototype.checkState = function(STATE){
 	
 	
 SceneManager.prototype.deleteSelectedObjects = function(){
+	var wasRestoring = this.history.isRestoring;
+	this.history.isRestoring = true;
+
 	if (this.checkState(this.STATE_DEFAULT_MODE)){
 		for (var i = 0; i < this.selectedBodies.length; i++){
 			this.removeBody(this.selectedBodies[i]);
@@ -321,10 +324,15 @@ SceneManager.prototype.deleteSelectedObjects = function(){
 			this.selectedParticles[0].shape.removeVertexGivenVertex(this.selectedVertices[i]);
 		}
 	}
-	this.history.addHistory();
+
+	this.history.isRestoring = wasRestoring;
+	this.recordHistory();
 };
 
 SceneManager.prototype.duplicateSelection = function(){
+	var wasRestoring = this.history.isRestoring;
+	this.history.isRestoring = true;
+
 	if (this.state == this.STATE_DEFAULT_MODE){
 		for (var i = 0; i < this.selectedBodies.length; i++){
 			
@@ -383,12 +391,18 @@ SceneManager.prototype.duplicateSelection = function(){
 		}
 	}
 	else if (this.state == this.STATE_IMAGE_VERTEX_EDIT_MODE){
-		var sprite = this.selectedBodies[0].sprites[this.selectedBodies[0].selectedSprite];
 		for (var i = 0; i < this.selectedVertices.length; i++){
-			sprite.vertices.splice(sprite.indexOfVertex(this.selectedVertices[i]) + 1, 0, this.selectedVertices[i].clone());
+			this.selectedBodies[0].sprites[this.selectedBodies[0].selectedSprite].vertices.splice(this.selectedBodies[0].sprites[this.selectedBodies[0].selectedSprite].indexOfVertex(this.selectedVertices[i]) + 1, 0, this.selectedVertices[i].clone());
 		}
 	}
-	this.history.addHistory();
+	else if (this.state == this.STATE_PARTICLE_EDIT_MODE){
+		for (var i = 0; i < this.selectedVertices.length; i++){
+			this.selectedParticles[0].shape.vertices.splice(this.selectedParticles[0].shape.indexOfVertex(this.selectedVertices[i]) + 1, 0, this.selectedVertices[i].clone());
+		}
+	}
+
+	this.history.isRestoring = wasRestoring;
+	this.recordHistory();
 };
 
 // don't use only aabb collision detection for chain shapes, instead use its edges
@@ -2139,11 +2153,15 @@ SceneManager.prototype.loadScene = function(scene){
 	//world
 	this.world = loadWorld(scene.world);
 	
-	for (s of scene.scripts) {
-		this.scripts.push(s)
+	if (scene.scripts) {
+		for (var s of scene.scripts) {
+			this.scripts.push(s);
+		}
 	}
 	this.history.isRestoring = wasRestoring;
-	this.recordHistory();
+	if(!this.history.isRestoring){
+		this.recordHistory();
+	}
 };
 
 function cloneArray(obj){

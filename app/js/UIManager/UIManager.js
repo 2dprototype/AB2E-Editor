@@ -257,6 +257,18 @@ UIManager.prototype.onKeyDown = function(e){
 		}
 	}
 	else if(ref.CTRL_PRESSED && e.which == 88) ref.exportScene();
+	else if(ref.CTRL_PRESSED && e.which == 90){ // Ctrl + Z
+		if(this.codeEditorBG.style.display == "block") {
+			this.codeEditor.undo();
+			e.preventDefault();
+		}
+	}
+	else if(ref.CTRL_PRESSED && e.which == 89){ // Ctrl + Y
+		if(this.codeEditorBG.style.display == "block") {
+			this.codeEditor.redo();
+			e.preventDefault();
+		}
+	}
 	
 	if(ref.SHIFT_PRESSED && ref.ALT_PRESSED && keycode == 86){ //v
 		ref.viewport.isHidden = !ref.viewport.isHidden;

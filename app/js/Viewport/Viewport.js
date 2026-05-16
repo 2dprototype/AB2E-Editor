@@ -554,7 +554,7 @@ Viewport.prototype.onMouseUp = function(e){
 	}
 
 	inputHandler.selectionArea = [0, 0, 0, 0, 0];
-	Editor.onFileChange();
+	this.sceneManager.recordHistory();
 };
 
 // viewport scaling

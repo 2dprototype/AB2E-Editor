@@ -119,3 +119,32 @@ function getTimeDiffAndPrettyText(_oDatePublished) {
 // function wrapFunc(raw) {
 	// return `(function(){${raw}})`
 // }
+
+function runIsolated(code, scope = {}) {
+	// List of sensitive globals to block by shadowing them with undefined
+	const blocked = [
+		'window', 'document', 'fs', 'path', 'require', 'process', 'os', 'crypto', 
+		'ipcRenderer', 'CoffeeScript', 'JSZip', 'ini', 'YAML', 'JSON5', 'JSONC', 
+		'CSON', 'jsonpack', 'toXML', 'fromXML', 'PSON', 'global', 'module', 'exports',
+		'electron', 'cmd', 'terminal', 'App', 'Project', 'UIManager', 'SceneManager',
+		'Viewport', 'InputHandler', 'Navigator', 'Renderer', 'SceneHistory'
+	];
+	
+	const keys = Object.keys(scope);
+	const values = Object.values(scope);
+	
+	// Enforce strict mode and isolate 'this'
+	const isolatedCode = `"use strict"; 
+		return (function() { 
+			${code} 
+		}).call(undefined);`;
+	
+	try {
+		// Create a function where the first arguments are scope variables,
+		// and the following are the blocked variables (which will be undefined)
+		const func = new Function(...keys, ...blocked, isolatedCode);
+		return func(...values);
+	} catch (e) {
+		throw e;
+	}
+}

@@ -83,7 +83,16 @@ GameView.prototype.init = function(scene, scripts){
 	for (s of scripts) {
 		if (s.type = "javascript") {
 			try {
-				let e = eval(s.raw)
+				let e = runIsolated(s.raw, { 
+					Editor: typeof Editor !== 'undefined' ? Editor : null,
+					box2d: typeof box2d !== 'undefined' ? box2d : null,
+					b2Vec2: typeof b2Vec2 !== 'undefined' ? b2Vec2 : null,
+					b2World: typeof b2World !== 'undefined' ? b2World : null,
+					b2Body: typeof b2Body !== 'undefined' ? b2Body : null,
+					b2Fixture: typeof b2Fixture !== 'undefined' ? b2Fixture : null,
+					b2AABB: typeof b2AABB !== 'undefined' ? b2AABB : null,
+					b2MouseJointDef: typeof b2MouseJointDef !== 'undefined' ? b2MouseJointDef : null
+				});
 				if(typeof e == 'function') this.functions.push(new e(this.worldLoader, this.worldLoader.world, this))
 			}
 			catch(err) {

@@ -396,9 +396,9 @@ App.prototype.init = function(){
 			}
 			else if(ref.terminal_mode == 'console'){
 				try {
-					var e = eval(input);
+					var e = runIsolated(input, { Editor: ref });
 					var str = JSON.stringify(e, null, 4);
-					var h =  hljs.highlight(str, {language: 'json'});
+					var h =  hljs.highlight(str || "undefined", {language: 'json'});
 					ref.terminal.println(`<code><pre>${h.value}</pre></code>`);
 				}
 				catch(err) {
@@ -709,7 +709,7 @@ App.prototype.runScript = function(filepath, type = ".js"){
 	else if(type == '.coffee') data = CoffeeScript.compile(file_data);
 	
 	try {
-	    eval(data);
+	    runIsolated(data, { Editor: ref });
 	}
 	catch(err) {
 		var err_msg = err.toString();
